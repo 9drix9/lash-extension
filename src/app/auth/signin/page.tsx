@@ -3,10 +3,8 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { Mail, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -14,48 +12,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 export default function SignInPage() {
   const t = useTranslations("auth");
   const tCommon = useTranslations("common");
 
-  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleGoogleSignIn() {
-    setIsGoogleLoading(true);
+    setIsLoading(true);
     setError(null);
     try {
       await signIn("google", { callbackUrl: "/dashboard" });
-    } catch {
-      setError(tCommon("error"));
-      setIsGoogleLoading(false);
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!email.trim()) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await signIn("resend", {
-        email: email.trim(),
-        callbackUrl: "/dashboard",
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError(tCommon("error"));
-        setIsLoading(false);
-      } else if (result?.url) {
-        window.location.href = result.url;
-      }
     } catch {
       setError(tCommon("error"));
       setIsLoading(false);
@@ -84,14 +53,20 @@ export default function SignInPage() {
         </CardHeader>
 
         <CardContent>
+          {error && (
+            <div className="mb-4 rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+
           <Button
             type="button"
             variant="outline"
-            disabled={isGoogleLoading || isLoading}
+            disabled={isLoading}
             onClick={handleGoogleSignIn}
             className="h-11 w-full gap-2"
           >
-            {isGoogleLoading ? (
+            {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <svg className="h-4 w-4" viewBox="0 0 24 24">
@@ -115,70 +90,6 @@ export default function SignInPage() {
             )}
             Sign in with Google
           </Button>
-
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
-                or continue with email
-              </span>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">{tCommon("email")}</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  className={cn(
-                    "h-11 pl-10",
-                    "focus-visible:ring-gold/50"
-                  )}
-                  autoComplete="email"
-                  autoFocus
-                />
-              </div>
-            </div>
-
-            {error && (
-              <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                {error}
-              </div>
-            )}
-
-            <Button
-              type="submit"
-              disabled={isLoading || !email.trim()}
-              className="h-11 w-full gap-2 bg-gold text-white shadow-md shadow-gold/20 hover:bg-gold-dark"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {tCommon("loading")}
-                </>
-              ) : (
-                <>
-                  {t("magicLink")}
-                  <ArrowRight className="h-4 w-4" />
-                </>
-              )}
-            </Button>
-          </form>
-
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            No password needed. We&apos;ll send a secure sign-in link to your
-            email.
-          </p>
         </CardContent>
       </Card>
     </div>
