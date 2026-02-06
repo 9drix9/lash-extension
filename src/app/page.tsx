@@ -31,32 +31,23 @@ import {
   ArrowRight,
   ChevronRight,
   Star,
-  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const MODULES = [
-  { number: 1, icon: BookOpen, title: "Lash Fundamentals" },
-  { number: 2, icon: Shield, title: "Sanitation, Safety & Professional Standards" },
-  { number: 3, icon: Wrench, title: "Products & Tools" },
-  { number: 4, icon: Sparkles, title: "Classic Lash Extensions" },
-  { number: 5, icon: Layers, title: "Volume & Hybrid Lashes" },
-  { number: 6, icon: Palette, title: "Lash Mapping & Styling" },
-  { number: 7, icon: Workflow, title: "Application Workflow" },
-  { number: 8, icon: Wrench, title: "Retention & Troubleshooting" },
-  { number: 9, icon: Heart, title: "Aftercare & Client Education" },
-  { number: 10, icon: Briefcase, title: "Business & Pricing" },
-  { number: 11, icon: Share2, title: "Branding & Social Media" },
-  { number: 12, icon: Dumbbell, title: "Practice, Certification & Next Steps" },
+const MODULE_ICONS = [
+  BookOpen, Shield, Wrench, Sparkles, Layers, Palette,
+  Workflow, Wrench, Heart, Briefcase, Share2, Dumbbell,
 ];
-
-const BONUS_MODULE = {
-  icon: Zap,
-  title: "Speed Lashing, Emergencies, Burnout, Scaling",
-};
 
 export default async function LandingPage() {
   const t = await getTranslations("landing");
+  const tCommon = await getTranslations("common");
+
+  const modules = MODULE_ICONS.map((icon, i) => ({
+    number: i + 1,
+    icon,
+    title: t(`mod${i + 1}`),
+  }));
 
   const stats = [
     { icon: BookOpen, label: t("modules") },
@@ -112,7 +103,7 @@ export default async function LandingPage() {
               className="mb-6 border-gold/30 bg-gold/10 px-4 py-1.5 text-gold-dark"
             >
               <Sparkles className="mr-1.5 h-3.5 w-3.5" />
-              Professional Certification Course
+              {t("profCertification")}
             </Badge>
 
             <h1 className="font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
@@ -211,13 +202,12 @@ export default async function LandingPage() {
               {t("modulesTitle")}
             </h2>
             <p className="mt-4 text-muted-foreground">
-              12 expertly crafted modules plus bonus content to take your skills
-              to the next level.
+              {t("modulesDesc")}
             </p>
           </div>
 
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {MODULES.map((mod) => (
+            {modules.map((mod) => (
               <div
                 key={mod.number}
                 className={cn(
@@ -254,7 +244,7 @@ export default async function LandingPage() {
                     {t("bonusTitle")}
                   </Badge>
                   <h3 className="text-sm font-semibold leading-snug text-foreground">
-                    {BONUS_MODULE.title}
+                    {t("bonusDesc")}
                   </h3>
                 </div>
               </div>
@@ -299,10 +289,10 @@ export default async function LandingPage() {
                 href="/"
                 className="font-display text-lg font-bold text-gold transition-opacity hover:opacity-80"
               >
-                Lash Extension Academy
+                {tCommon("appName")}
               </Link>
               <p className="mt-1 text-sm text-muted-foreground">
-                Professional lash extension certification.
+                {t("footerDesc")}
               </p>
             </div>
 
@@ -311,32 +301,31 @@ export default async function LandingPage() {
                 href="/enroll"
                 className="transition-colors hover:text-foreground"
               >
-                Enroll
+                {tCommon("enroll")}
               </Link>
               <Link
                 href="/dashboard"
                 className="transition-colors hover:text-foreground"
               >
-                Dashboard
+                {tCommon("dashboard")}
               </Link>
               <Link
                 href="/live"
                 className="transition-colors hover:text-foreground"
               >
-                Live Q&A
+                {tCommon("liveQA")}
               </Link>
               <Link
                 href="/affiliate"
                 className="transition-colors hover:text-foreground"
               >
-                Affiliate
+                {tCommon("affiliate")}
               </Link>
             </nav>
           </div>
 
           <div className="mt-8 border-t pt-8 text-center text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Lash Extension Academy. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} {t("footerCopyright")}
           </div>
         </div>
       </footer>
