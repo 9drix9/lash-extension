@@ -25,7 +25,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Google,
     Resend({
-      from: process.env.EMAIL_FROM || "noreply@lashacademy.com",
+      apiKey: process.env.AUTH_RESEND_KEY,
+      from: process.env.EMAIL_FROM || "onboarding@resend.dev",
     }),
   ],
   session: { strategy: "jwt" },
