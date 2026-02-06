@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
@@ -85,13 +85,48 @@ export function QuizClient({
   const t = useTranslations("quiz");
   const tCommon = useTranslations("common");
 
-  // Shuffle questions for retakes
-  const [questions] = useState(() =>
-    initialAttemptCount > 0 ? shuffleArray(rawQuestions) : rawQuestions
-  );
+  const storageKey = `quiz-progress-${quiz.id}`;
 
-  const [currentQ, setCurrentQ] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  // Restore saved progress or initialize fresh
+  const [questions] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = sessionStorage.getItem(storageKey);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.questionOrder) {
+            // Restore the same question order
+            const ordered = parsed.questionOrder
+              .map((id: string) => rawQuestions.find((q) => q.id === id))
+              .filter(Boolean) as typeof rawQuestions;
+            if (ordered.length === rawQuestions.length) return ordered;
+          }
+        }
+      } catch { /* ignore */ }
+    }
+    return initialAttemptCount > 0 ? shuffleArray(rawQuestions) : rawQuestions;
+  });
+
+  const [currentQ, setCurrentQ] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = sessionStorage.getItem(storageKey);
+        if (saved) return JSON.parse(saved).currentQ ?? 0;
+      } catch { /* ignore */ }
+    }
+    return 0;
+  });
+
+  const [answers, setAnswers] = useState<Record<string, string>>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = sessionStorage.getItem(storageKey);
+        if (saved) return JSON.parse(saved).answers ?? {};
+      } catch { /* ignore */ }
+    }
+    return {};
+  });
+
   const [viewMode, setViewMode] = useState<ViewMode>(
     initialHasPassed ? "review" : "quiz"
   );
@@ -108,6 +143,30 @@ export function QuizClient({
 
   const quizTitle = getLocalizedField(quiz, "title", locale);
   const moduleTitle = getLocalizedField(quiz, "moduleTitle", locale);
+
+  // Persist progress to sessionStorage
+  const saveProgress = useCallback(() => {
+    try {
+      sessionStorage.setItem(
+        storageKey,
+        JSON.stringify({
+          currentQ,
+          answers,
+          questionOrder: questions.map((q) => q.id),
+        })
+      );
+    } catch { /* ignore */ }
+  }, [storageKey, currentQ, answers, questions]);
+
+  useEffect(() => {
+    if (viewMode === "quiz") {
+      saveProgress();
+    }
+  }, [viewMode, saveProgress]);
+
+  const clearProgress = () => {
+    try { sessionStorage.removeItem(storageKey); } catch { /* ignore */ }
+  };
 
   const handleSelectAnswer = (questionId: string, optionId: string) => {
     if (viewMode !== "quiz") return;
@@ -128,6 +187,7 @@ export function QuizClient({
       }));
 
       const res = await submitQuiz(quiz.id, quizAnswers);
+      clearProgress();
       setResult(res);
       setViewMode("result");
       setAttemptCount((prev) => prev + 1);
@@ -144,6 +204,7 @@ export function QuizClient({
   };
 
   const handleRetake = () => {
+    clearProgress();
     setAnswers({});
     setCurrentQ(0);
     setResult(null);
