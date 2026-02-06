@@ -1,4 +1,5 @@
 import { redirect, notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -14,7 +15,8 @@ export default async function ModulePage({
   const session = await auth();
   if (!session?.user) redirect("/auth/signin");
 
-  const locale = session.user.locale || "en";
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("locale")?.value === "es" ? "es" : "en";
 
   const mod = await prisma.module.findUnique({
     where: { id: moduleId },

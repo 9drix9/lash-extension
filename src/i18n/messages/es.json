@@ -59,7 +59,18 @@
     "modulesTitle": "Módulos del Curso",
     "bonusTitle": "Módulos de Bonificación",
     "ctaTitle": "¿Lista para Transformar Tu Carrera?",
-    "ctaSub": "Únete a miles de artistas de pestañas que han elevado sus habilidades con nuestra academia."
+    "ctaSub": "Únete a miles de artistas de pestañas que han elevado sus habilidades con nuestra academia.",
+    "noCourseAvailable": "No Hay Curso Disponible",
+    "noCourseDesc": "No hay un curso activo en este momento. Por favor vuelve más tarde.",
+    "whatsIncluded": "Qué Incluye",
+    "modulesCount": "{count} Módulos",
+    "quizzesCount": "{count} Exámenes",
+    "videoLessons": "{count}+ lecciones en video",
+    "selfPaced": "Aprende a tu ritmo",
+    "certificateCompletion": "Certificado de finalización",
+    "lifetimeAccess": "Acceso de por vida",
+    "noCreditCard": "No se requiere tarjeta de crédito. Comienza a aprender de inmediato.",
+    "secureCheckout": "Pago seguro. Garantía de devolución de 30 días."
   },
   "auth": {
     "signInTitle": "Inicia sesión en tu cuenta",

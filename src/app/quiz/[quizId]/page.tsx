@@ -1,4 +1,5 @@
 import { redirect, notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getQuizForStudent } from "@/lib/actions/quiz";
 import { QuizClient } from "./quiz-client";
@@ -11,6 +12,8 @@ export default async function QuizPage({
   const { quizId } = await params;
   const session = await auth();
   if (!session?.user) redirect("/auth/signin");
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("locale")?.value === "es" ? "es" : "en";
 
   try {
     const data = await getQuizForStudent(quizId);
@@ -26,7 +29,7 @@ export default async function QuizPage({
         hasPassed={data.hasPassed}
         passingScore={data.passingScore}
         attemptCount={data.attemptCount}
-        locale={session.user.locale || "en"}
+        locale={locale}
       />
     );
   } catch {

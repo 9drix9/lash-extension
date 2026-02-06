@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { setLocale } from "@/lib/actions/locale";
 
 export function LanguageToggle() {
   const t = useTranslations("common");
@@ -17,9 +18,10 @@ export function LanguageToggle() {
     if (match) setCurrentLocale(match[1]);
   }, []);
 
-  function switchLocale(locale: "en" | "es") {
+  async function switchLocale(locale: "en" | "es") {
     document.cookie = `locale=${locale};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
     setOpen(false);
+    await setLocale(locale);
     window.location.reload();
   }
 

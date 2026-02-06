@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { getActiveCourse } from "@/lib/actions/enrollment";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getLocalizedField } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -28,6 +30,8 @@ export default async function EnrollPage() {
   const t = await getTranslations("common");
   const tLanding = await getTranslations("landing");
   const session = await auth();
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("locale")?.value === "es" ? "es" : "en";
 
   // If the user is signed in, check whether they are already enrolled
   if (session?.user) {
@@ -50,10 +54,10 @@ export default async function EnrollPage() {
         <Card className="w-full max-w-md text-center">
           <CardHeader>
             <CardTitle className="font-display text-2xl">
-              No Course Available
+              {tLanding("noCourseAvailable")}
             </CardTitle>
             <CardDescription>
-              There is no active course at the moment. Please check back later.
+              {tLanding("noCourseDesc")}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -70,8 +74,8 @@ export default async function EnrollPage() {
   const quizCount = course.modules.filter((mod) => mod.quiz).length;
 
   const features = [
-    { icon: BookOpen, label: `${moduleCount} Modules` },
-    { icon: ClipboardCheck, label: `${quizCount} Quizzes` },
+    { icon: BookOpen, label: tLanding("modulesCount", { count: moduleCount }) },
+    { icon: ClipboardCheck, label: tLanding("quizzesCount", { count: quizCount }) },
     { icon: Award, label: tLanding("certificate") },
     { icon: Globe, label: tLanding("bilingual") },
     { icon: Video, label: tLanding("liveSupport") },
@@ -96,11 +100,11 @@ export default async function EnrollPage() {
 
           <div>
             <CardTitle className="font-display text-2xl sm:text-3xl">
-              {course.titleEn}
+              {getLocalizedField(course, "title", locale)}
             </CardTitle>
-            {course.subtitleEn && (
+            {getLocalizedField(course, "subtitle", locale) && (
               <CardDescription className="mt-2 text-base">
-                {course.subtitleEn}
+                {getLocalizedField(course, "subtitle", locale)}
               </CardDescription>
             )}
           </div>
@@ -128,7 +132,7 @@ export default async function EnrollPage() {
           {/* What's included */}
           <div>
             <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              What&apos;s Included
+              {tLanding("whatsIncluded")}
             </h3>
             <ul className="space-y-3">
               {features.map((feature) => (
@@ -146,10 +150,10 @@ export default async function EnrollPage() {
           <div className="rounded-lg bg-muted/60 p-4">
             <ul className="space-y-2">
               {[
-                `${lessonCount}+ video lessons`,
-                "Self-paced learning",
-                "Certificate of completion",
-                "Lifetime access",
+                tLanding("videoLessons", { count: lessonCount }),
+                tLanding("selfPaced"),
+                tLanding("certificateCompletion"),
+                tLanding("lifetimeAccess"),
               ].map((item) => (
                 <li
                   key={item}
@@ -171,8 +175,8 @@ export default async function EnrollPage() {
           />
           <p className="text-center text-xs text-muted-foreground">
             {isFree
-              ? "No credit card required. Start learning immediately."
-              : "Secure checkout. 30-day money-back guarantee."}
+              ? tLanding("noCreditCard")
+              : tLanding("secureCheckout")}
           </p>
         </CardFooter>
       </Card>

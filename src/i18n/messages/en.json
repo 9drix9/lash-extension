@@ -28,7 +28,6 @@
     "viewCourse": "View Course",
     "liveQA": "Live Q&A",
     "affiliate": "Affiliate Program",
-    "back": "Back",
     "processing": "Processing...",
     "signInToEnroll": "Sign In to Enroll",
     "welcomeEnrolled": "Welcome! You are now enrolled.",
@@ -59,7 +58,18 @@
     "modulesTitle": "Course Modules",
     "bonusTitle": "Bonus Modules",
     "ctaTitle": "Ready to Transform Your Career?",
-    "ctaSub": "Join thousands of lash artists who have elevated their skills with our academy."
+    "ctaSub": "Join thousands of lash artists who have elevated their skills with our academy.",
+    "noCourseAvailable": "No Course Available",
+    "noCourseDesc": "There is no active course at the moment. Please check back later.",
+    "whatsIncluded": "What's Included",
+    "modulesCount": "{count} Modules",
+    "quizzesCount": "{count} Quizzes",
+    "videoLessons": "{count}+ video lessons",
+    "selfPaced": "Self-paced learning",
+    "certificateCompletion": "Certificate of completion",
+    "lifetimeAccess": "Lifetime access",
+    "noCreditCard": "No credit card required. Start learning immediately.",
+    "secureCheckout": "Secure checkout. 30-day money-back guarantee."
   },
   "auth": {
     "signInTitle": "Sign in to your account",

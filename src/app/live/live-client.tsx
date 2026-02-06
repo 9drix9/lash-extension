@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { getLocalizedField } from "@/lib/utils";
 import {
   Calendar,
   Clock,
@@ -38,6 +39,7 @@ interface Props {
 
 export function LiveSessionsClient({ upcoming, past, isLoggedIn }: Props) {
   const t = useTranslations("live");
+  const locale = useLocale();
 
   return (
     <Tabs defaultValue="upcoming">
@@ -66,11 +68,11 @@ export function LiveSessionsClient({ upcoming, past, isLoggedIn }: Props) {
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold mb-1">
-                        {session.titleEn}
+                        {getLocalizedField(session, "title", locale)}
                       </h3>
-                      {session.descEn && (
+                      {getLocalizedField(session, "desc", locale) && (
                         <p className="text-sm text-muted-foreground mb-3">
-                          {session.descEn}
+                          {getLocalizedField(session, "desc", locale)}
                         </p>
                       )}
                       <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
@@ -88,7 +90,7 @@ export function LiveSessionsClient({ upcoming, past, isLoggedIn }: Props) {
                         </span>
                         <span className="flex items-center gap-1">
                           <Users className="w-4 h-4" />
-                          {session.rsvpCount} RSVPs
+                          {t("rsvpCount", { count: session.rsvpCount })}
                         </span>
                       </div>
                     </div>
@@ -116,7 +118,7 @@ export function LiveSessionsClient({ upcoming, past, isLoggedIn }: Props) {
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold">{session.titleEn}</h3>
+                    <h3 className="text-lg font-semibold">{getLocalizedField(session, "title", locale)}</h3>
                     <div className="flex gap-3 text-sm text-muted-foreground mt-1">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
@@ -124,7 +126,7 @@ export function LiveSessionsClient({ upcoming, past, isLoggedIn }: Props) {
                       </span>
                       <span className="flex items-center gap-1">
                         <MessageSquare className="w-4 h-4" />
-                        {session.questionCount} questions
+                        {session.questionCount} {t("questions").toLowerCase()}
                       </span>
                     </div>
                   </div>

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { getLocalizedField } from "@/lib/utils";
 import {
   ArrowLeft,
   ArrowUpCircle,
@@ -41,12 +42,15 @@ interface QuestionData {
 interface SessionData {
   id: string;
   titleEn: string;
+  titleEs: string | null;
   descEn: string;
+  descEs: string | null;
   scheduledAt: string;
   durationMin: number;
   joinUrl: string;
   replayUrl: string | null;
   notesEn: string | null;
+  notesEs: string | null;
   rsvpCount: number;
   questions: QuestionData[];
 }
@@ -63,6 +67,7 @@ export function SessionClient({
   userId,
 }: Props) {
   const t = useTranslations("live");
+  const locale = useLocale();
   const [hasRsvped, setHasRsvped] = useState(initialRsvped);
   const [questionText, setQuestionText] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -140,11 +145,11 @@ export function SessionClient({
                     </Badge>
                   )}
                   <h1 className="text-2xl font-display font-bold">
-                    {session.titleEn}
+                    {getLocalizedField(session, "title", locale)}
                   </h1>
                 </div>
-                {session.descEn && (
-                  <p className="text-muted-foreground mb-4">{session.descEn}</p>
+                {getLocalizedField(session, "desc", locale) && (
+                  <p className="text-muted-foreground mb-4">{getLocalizedField(session, "desc", locale)}</p>
                 )}
                 <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
@@ -201,7 +206,7 @@ export function SessionClient({
         </Card>
 
         {/* Session Notes */}
-        {session.notesEn && (
+        {getLocalizedField(session, "notes", locale) && (
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="text-lg">{t("notes")}</CardTitle>
@@ -209,7 +214,7 @@ export function SessionClient({
             <CardContent>
               <div
                 className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: session.notesEn }}
+                dangerouslySetInnerHTML={{ __html: getLocalizedField(session, "notes", locale) }}
               />
             </CardContent>
           </Card>

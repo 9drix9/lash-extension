@@ -20,12 +20,15 @@ export default async function SessionPage({
       session={{
         id: data.id,
         titleEn: data.titleEn,
+        titleEs: data.titleEs || null,
         descEn: data.descEn,
+        descEs: data.descEs || null,
         scheduledAt: data.scheduledAt.toISOString(),
         durationMin: data.durationMin,
         joinUrl: data.joinUrl,
         replayUrl: data.replayUrl || null,
         notesEn: data.notesEn || null,
+        notesEs: data.notesEs || null,
         rsvpCount: data._count.rsvps,
         questions: data.questions.map((q) => ({
           id: q.id,
