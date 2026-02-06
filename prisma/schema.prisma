@@ -1,0 +1,404 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── AUTH MODELS ───────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("STUDENT")
+  locale        String    @default("en")
+  enrolledAt    DateTime?
+  referralCode  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts         Account[]
+  sessions         Session[]
+  lessonProgress   LessonProgress[]
+  moduleProgress   ModuleProgress[]
+  quizAttempts     QuizAttempt[]
+  certificates     Certificate[]
+  liveQuestions    LiveQuestion[]
+  liveRsvps        LiveRsvp[]
+  affiliate        Affiliate?
+  milestoneAwards  MilestoneAward[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── COURSE MODELS ─────────────────────────────────────────
+
+model Course {
+  id          String  @id @default(cuid())
+  titleEn     String
+  titleEs     String  @default("")
+  subtitleEn  String  @default("")
+  subtitleEs  String  @default("")
+  descEn      String  @db.Text
+  descEs      String  @default("") @db.Text
+  imageUrl    String  @default("")
+  price       Int     @default(0) // in cents, 0 = free
+  published   Boolean @default(false)
+  passingScore Int    @default(80)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  modules    Module[]
+  milestones Milestone[]
+}
+
+model Module {
+  id          String  @id @default(cuid())
+  courseId     String
+  titleEn     String
+  titleEs     String  @default("")
+  subtitleEn  String  @default("")
+  subtitleEs  String  @default("")
+  descEn      String  @default("") @db.Text
+  descEs      String  @default("") @db.Text
+  imageUrl    String  @default("")
+  order       Int
+  isBonus     Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons        Lesson[]
+  quiz           Quiz?
+  moduleProgress ModuleProgress[]
+
+  @@index([courseId])
+  @@index([order])
+}
+
+model Lesson {
+  id          String  @id @default(cuid())
+  moduleId    String
+  titleEn     String
+  titleEs     String  @default("")
+  contentEn   String  @default("") @db.Text
+  contentEs   String  @default("") @db.Text
+  order       Int
+  // Video
+  videoProvider String? // youtube, vimeo, mux, cloudflare
+  videoUrl      String?
+  videoPoster   String?
+  // Downloads
+  downloadUrl   String?
+  downloadLabel String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  module         Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessonProgress LessonProgress[]
+
+  @@index([moduleId])
+  @@index([order])
+}
+
+model Quiz {
+  id           String  @id @default(cuid())
+  moduleId     String  @unique
+  titleEn      String
+  titleEs      String  @default("")
+  descEn       String  @default("")
+  descEs       String  @default("")
+  passingScore Int?    // null = use course default
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  module    Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  questions Question[]
+  attempts  QuizAttempt[]
+}
+
+model Question {
+  id            String   @id @default(cuid())
+  quizId        String
+  type          String   @default("MCQ")
+  questionEn    String   @db.Text
+  questionEs    String   @default("") @db.Text
+  // Scenario context (for SCENARIO type)
+  scenarioEn    String?  @db.Text
+  scenarioEs    String?  @db.Text
+  // Options stored as JSON: [{id, textEn, textEs}]
+  options       Json
+  correctOptionId String
+  explanationEn String   @default("") @db.Text
+  explanationEs String   @default("") @db.Text
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+}
+
+// ─── PROGRESS MODELS ───────────────────────────────────────
+
+model LessonProgress {
+  id             String    @id @default(cuid())
+  userId         String
+  lessonId       String
+  watchedPercent Float     @default(0)
+  completed      Boolean   @default(false)
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+}
+
+model ModuleProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  moduleId  String
+  status    String   @default("LOCKED")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId])
+  @@index([userId])
+  @@index([moduleId])
+}
+
+model QuizAttempt {
+  id            String   @id @default(cuid())
+  userId        String
+  quizId        String
+  score         Float
+  passed        Boolean
+  attemptNumber Int
+  answers       Json     // [{questionId, selectedOptionId, correct}]
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([quizId])
+  @@index([userId, quizId])
+}
+
+// ─── CERTIFICATE ───────────────────────────────────────────
+
+model Certificate {
+  id              String   @id @default(cuid())
+  userId          String
+  courseId         String
+  certificateCode String   @unique
+  studentName     String
+  courseName      String
+  pdfUrl          String?
+  issuedAt        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([certificateCode])
+}
+
+// ─── MILESTONES ────────────────────────────────────────────
+
+model Milestone {
+  id          String  @id @default(cuid())
+  courseId     String
+  triggerType String  // FIRST_MODULE, QUARTER, HALF, THREE_QUARTER, FIRST_QUIZ_PASS, COURSE_COMPLETE
+  titleEn     String
+  titleEs     String  @default("")
+  messageEn   String  @default("")
+  messageEs   String  @default("")
+  badgeEmoji  String  @default("")
+  nextStepEn  String  @default("")
+  nextStepEs  String  @default("")
+  createdAt   DateTime @default(now())
+
+  course Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  awards MilestoneAward[]
+
+  @@index([courseId])
+}
+
+model MilestoneAward {
+  id          String   @id @default(cuid())
+  userId      String
+  milestoneId String
+  awardedAt   DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestone Milestone @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, milestoneId])
+  @@index([userId])
+}
+
+// ─── LIVE SESSIONS ─────────────────────────────────────────
+
+model LiveSession {
+  id          String   @id @default(cuid())
+  titleEn     String
+  titleEs     String   @default("")
+  descEn      String   @default("") @db.Text
+  descEs      String   @default("") @db.Text
+  scheduledAt DateTime
+  durationMin Int      @default(60)
+  joinUrl     String   @default("")
+  replayUrl   String?
+  notesEn     String?  @db.Text
+  notesEs     String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rsvps     LiveRsvp[]
+  questions LiveQuestion[]
+
+  @@index([scheduledAt])
+}
+
+model LiveRsvp {
+  id        String   @id @default(cuid())
+  userId    String
+  sessionId String
+  createdAt DateTime @default(now())
+
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session LiveSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sessionId])
+}
+
+model LiveQuestion {
+  id        String   @id @default(cuid())
+  userId    String
+  sessionId String
+  textEn    String   @db.Text
+  textEs    String   @default("") @db.Text
+  status    String   @default("PENDING")
+  upvotes   Int      @default(0)
+  answeredAt DateTime?
+  createdAt DateTime @default(now())
+
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session LiveSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([sessionId, status])
+}
+
+// ─── AFFILIATE ─────────────────────────────────────────────
+
+model Affiliate {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  code           String   @unique
+  status         String   @default("PENDING")
+  commissionRate Float    @default(10) // percent
+  attributionDays Int     @default(30)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clicks      AffiliateClick[]
+  conversions AffiliateConversion[]
+  payouts     Payout[]
+
+  @@index([code])
+}
+
+model AffiliateClick {
+  id          String   @id @default(cuid())
+  affiliateId String
+  ip          String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  affiliate Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+
+  @@index([affiliateId])
+}
+
+model AffiliateConversion {
+  id          String   @id @default(cuid())
+  affiliateId String
+  email       String
+  amount      Int      @default(0) // cents
+  commission  Int      @default(0) // cents
+  createdAt   DateTime @default(now())
+
+  affiliate Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+
+  @@index([affiliateId])
+}
+
+model Payout {
+  id          String   @id @default(cuid())
+  affiliateId String
+  amount      Int      // cents
+  status      String   @default("PENDING")
+  notes       String?
+  paidAt      DateTime?
+  createdAt   DateTime @default(now())
+
+  affiliate Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+
+  @@index([affiliateId])
+}
