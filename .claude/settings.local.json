@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npx prisma db push:*)",
       "Bash(npx tsx:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm ls:*)"
     ]
   }
 }

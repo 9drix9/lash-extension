@@ -44,7 +44,7 @@ export default function SignInPage() {
     setError(null);
 
     try {
-      const result = await signIn("email", {
+      const result = await signIn("resend", {
         email: email.trim(),
         callbackUrl: "/dashboard",
         redirect: false,

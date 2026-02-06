@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
-import EmailProvider from "next-auth/providers/email";
+import Resend from "next-auth/providers/resend";
 import { prisma } from "@/lib/prisma";
 declare module "next-auth" {
   interface Session {
@@ -24,15 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma) as any,
   providers: [
     Google,
-    EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: Number(process.env.EMAIL_SERVER_PORT || 587),
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
-        },
-      },
+    Resend({
       from: process.env.EMAIL_FROM || "noreply@lashacademy.com",
     }),
   ],
