@@ -46,9 +46,9 @@ export function AffiliateClient({ isLoggedIn, stats }: Props) {
     try {
       await applyForAffiliate();
       setApplied(true);
-      toast.success("Application submitted!");
+      toast.success(t("applicationSubmitted"));
     } catch {
-      toast.error("Failed to apply");
+      toast.error(t("failedApply"));
     } finally {
       setApplying(false);
     }
@@ -60,7 +60,7 @@ export function AffiliateClient({ isLoggedIn, stats }: Props) {
     navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-    toast.success("Link copied!");
+    toast.success(t("linkCopied"));
   };
 
   if (!isLoggedIn) {
@@ -68,7 +68,7 @@ export function AffiliateClient({ isLoggedIn, stats }: Props) {
       <Card className="text-center">
         <CardContent className="p-8">
           <p className="text-muted-foreground mb-4">
-            Sign in to apply for the affiliate program.
+            {t("signInToApply")}
           </p>
           <Link href="/auth/signin">
             <Button>{t("apply")}</Button>
@@ -97,7 +97,7 @@ export function AffiliateClient({ isLoggedIn, stats }: Props) {
           <Check className="w-12 h-12 text-green-500 mx-auto mb-3" />
           <h3 className="text-lg font-semibold">{t("applied")}</h3>
           <p className="text-sm text-muted-foreground mt-2">
-            Your application is being reviewed. You'll be notified when approved.
+            {t("applicationReview")}
           </p>
         </CardContent>
       </Card>
@@ -110,7 +110,7 @@ export function AffiliateClient({ isLoggedIn, stats }: Props) {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Your Affiliate Dashboard</CardTitle>
+            <CardTitle>{t("yourDashboard")}</CardTitle>
             <Badge
               className={
                 stats.affiliate.status === "APPROVED"
@@ -130,7 +130,7 @@ export function AffiliateClient({ isLoggedIn, stats }: Props) {
               {/* Referral Link */}
               <div className="bg-muted rounded-lg p-3 mb-6">
                 <p className="text-xs text-muted-foreground mb-1">
-                  Your Referral Link
+                  {t("yourReferralLink")}
                 </p>
                 <div className="flex items-center gap-2">
                   <code className="text-sm flex-1 truncate">
@@ -154,38 +154,38 @@ export function AffiliateClient({ isLoggedIn, stats }: Props) {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
                   <p className="text-2xl font-bold">{stats.totalClicks}</p>
-                  <p className="text-xs text-muted-foreground">Clicks</p>
+                  <p className="text-xs text-muted-foreground">{t("clicks")}</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold">{stats.totalConversions}</p>
-                  <p className="text-xs text-muted-foreground">Conversions</p>
+                  <p className="text-xs text-muted-foreground">{t("conversions")}</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold">
                     ${(stats.totalCommission / 100).toFixed(2)}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Total Earned
+                    {t("totalEarned")}
                   </p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold text-primary">
                     ${(stats.balance / 100).toFixed(2)}
                   </p>
-                  <p className="text-xs text-muted-foreground">Balance</p>
+                  <p className="text-xs text-muted-foreground">{t("balance")}</p>
                 </div>
               </div>
 
               <p className="text-xs text-muted-foreground mt-4 text-center">
-                Commission Rate: {stats.affiliate.commissionRate}%
+                {t("commissionRate", { rate: stats.affiliate.commissionRate })}
               </p>
             </>
           )}
 
           {stats.affiliate.status === "PENDING" && (
             <p className="text-center text-muted-foreground">
-              Your application is being reviewed.
-            </p>
+              {t("pendingReview")}
+</p>
           )}
         </CardContent>
       </Card>

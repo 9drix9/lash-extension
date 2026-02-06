@@ -4,7 +4,10 @@
       "Bash(npx prisma db push:*)",
       "Bash(npx tsx:*)",
       "Bash(npx tsc:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(npx next build)",
+      "Bash(npx next build:*)",
+      "Bash(node -e:*)"
     ]
   }
 }

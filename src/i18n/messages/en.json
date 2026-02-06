@@ -27,7 +27,14 @@
     "free": "Free",
     "viewCourse": "View Course",
     "liveQA": "Live Q&A",
-    "affiliate": "Affiliate Program"
+    "affiliate": "Affiliate Program",
+    "back": "Back",
+    "processing": "Processing...",
+    "signInToEnroll": "Sign In to Enroll",
+    "welcomeEnrolled": "Welcome! You are now enrolled.",
+    "tryAgain": "Something went wrong. Please try again.",
+    "continue": "Continue",
+    "nextStep": "Next Step"
   },
   "landing": {
     "hero": "Master the Art of Lash Extensions",
@@ -83,7 +90,10 @@
     "completePrevious": "Complete previous module quiz to unlock",
     "allComplete": "Congratulations! You've completed the entire course!",
     "getCertificate": "Get Your Certificate",
-    "viewCertificate": "View Certificate"
+    "viewCertificate": "View Certificate",
+    "certificateGenerated": "Certificate generated!",
+    "certificateError": "Failed to generate certificate",
+    "bonus": "Bonus"
   },
   "module": {
     "title": "Module",
@@ -99,7 +109,9 @@
     "backToDashboard": "Back to Dashboard",
     "progress": "Lesson Progress",
     "allLessonsComplete": "All lessons completed! Take the quiz to advance.",
-    "startQuiz": "Start Quiz"
+    "startQuiz": "Start Quiz",
+    "markCompleteError": "Failed to mark complete",
+    "bonus": "BONUS"
   },
   "quiz": {
     "title": "Quiz",
@@ -127,7 +139,9 @@
     "answeredCorrectly": "You answered {correct} out of {total} questions correctly.",
     "showAnswers": "The correct answers are shown below since you passed.",
     "hiddenAnswers": "Correct answers will be revealed after you pass the quiz.",
-    "questionsWrong": "Questions to review (correct answers hidden until you pass):"
+    "questionsWrong": "Questions to review (correct answers hidden until you pass):",
+    "answerAllQuestions": "Please answer all questions before submitting.",
+    "failedSubmit": "Failed to submit quiz"
   },
   "certificate": {
     "title": "Certificate of Completion",
@@ -160,6 +174,13 @@
     "upvote": "Upvote",
     "replay": "Watch Replay",
     "notes": "Session Notes",
+    "back": "Back",
+    "failedRsvp": "Failed to RSVP",
+    "questionSubmitted": "Question submitted!",
+    "failedQuestion": "Failed to submit question",
+    "liveNow": "LIVE",
+    "rsvpCount": "{count} RSVPs",
+    "noQuestionsYet": "No questions yet. Be the first to ask!",
     "days": "days",
     "hours": "hours",
     "minutes": "min",
@@ -174,7 +195,20 @@
     "benefit1": "Earn commission on every referral",
     "benefit2": "Unique tracking link",
     "benefit3": "Real-time dashboard",
-    "benefit4": "Monthly payouts"
+    "benefit4": "Monthly payouts",
+    "applicationSubmitted": "Application submitted!",
+    "failedApply": "Failed to apply",
+    "linkCopied": "Link copied!",
+    "signInToApply": "Sign in to apply for the affiliate program.",
+    "applicationReview": "Your application is being reviewed. You'll be notified when approved.",
+    "yourDashboard": "Your Affiliate Dashboard",
+    "yourReferralLink": "Your Referral Link",
+    "clicks": "Clicks",
+    "conversions": "Conversions",
+    "totalEarned": "Total Earned",
+    "balance": "Balance",
+    "commissionRate": "Commission Rate: {rate}%",
+    "pendingReview": "Your application is being reviewed."
   },
   "admin": {
     "title": "Admin Dashboard",

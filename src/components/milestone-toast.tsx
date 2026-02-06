@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ interface MilestoneToastProps {
 }
 
 export function MilestoneToast({ milestone, onClose }: MilestoneToastProps) {
+  const t = useTranslations("common");
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -101,7 +103,7 @@ export function MilestoneToast({ milestone, onClose }: MilestoneToastProps) {
                 )}
               >
                 <p className="text-xs font-medium uppercase tracking-wide text-gold-dark">
-                  Next Step
+                  {t("nextStep")}
                 </p>
                 <p className="mt-1 text-sm text-foreground">
                   {milestone.nextStep}
@@ -114,7 +116,7 @@ export function MilestoneToast({ milestone, onClose }: MilestoneToastProps) {
               onClick={onClose}
               className="bg-gold text-white hover:bg-gold-dark"
             >
-              Continue
+              {t("continue")}
             </Button>
           </div>
         </div>

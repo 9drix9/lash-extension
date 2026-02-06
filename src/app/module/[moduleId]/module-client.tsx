@@ -76,7 +76,7 @@ export function ModuleClient({
       );
       toast.success(t("completed"));
     } catch {
-      toast.error("Failed to mark complete");
+      toast.error(t("markCompleteError"));
     }
   };
 
@@ -96,7 +96,7 @@ export function ModuleClient({
           <div>
             <div className="flex items-center gap-2">
               <Badge variant="outline">
-                {isBonus ? "BONUS" : `${t("title")} ${moduleOrder}`}
+                {isBonus ? t("bonus") : `${t("title")} ${moduleOrder}`}
               </Badge>
               {status === "COMPLETED" && (
                 <Badge className="bg-green-100 text-green-800">

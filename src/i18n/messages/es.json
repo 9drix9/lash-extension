@@ -27,7 +27,14 @@
     "free": "Gratis",
     "viewCourse": "Ver Curso",
     "liveQA": "Sesiones en Vivo",
-    "affiliate": "Programa de Afiliados"
+    "affiliate": "Programa de Afiliados",
+    "back": "Volver",
+    "processing": "Procesando...",
+    "signInToEnroll": "Inicia Sesión para Inscribirte",
+    "welcomeEnrolled": "¡Bienvenida! Ya estás inscrita.",
+    "tryAgain": "Algo salió mal. Inténtalo de nuevo.",
+    "continue": "Continuar",
+    "nextStep": "Siguiente Paso"
   },
   "landing": {
     "hero": "Domina el Arte de las Extensiones de Pestañas",
@@ -83,7 +90,10 @@
     "completePrevious": "Completa el examen del módulo anterior para desbloquear",
     "allComplete": "¡Felicidades! ¡Has completado todo el curso!",
     "getCertificate": "Obtener Tu Certificado",
-    "viewCertificate": "Ver Certificado"
+    "viewCertificate": "Ver Certificado",
+    "certificateGenerated": "¡Certificado generado!",
+    "certificateError": "Error al generar el certificado",
+    "bonus": "Bonificación"
   },
   "module": {
     "title": "Módulo",
@@ -99,7 +109,9 @@
     "backToDashboard": "Volver al Panel",
     "progress": "Progreso de Lecciones",
     "allLessonsComplete": "¡Todas las lecciones completadas! Toma el examen para avanzar.",
-    "startQuiz": "Iniciar Examen"
+    "startQuiz": "Iniciar Examen",
+    "markCompleteError": "Error al marcar como completada",
+    "bonus": "BONIFICACIÓN"
   },
   "quiz": {
     "title": "Examen",
@@ -127,7 +139,9 @@
     "answeredCorrectly": "Respondiste {correct} de {total} preguntas correctamente.",
     "showAnswers": "Las respuestas correctas se muestran abajo ya que aprobaste.",
     "hiddenAnswers": "Las respuestas correctas se revelarán después de aprobar el examen.",
-    "questionsWrong": "Preguntas para revisar (respuestas correctas ocultas hasta aprobar):"
+    "questionsWrong": "Preguntas para revisar (respuestas correctas ocultas hasta aprobar):",
+    "answerAllQuestions": "Por favor responde todas las preguntas antes de enviar.",
+    "failedSubmit": "Error al enviar el examen"
   },
   "certificate": {
     "title": "Certificado de Finalización",
@@ -160,6 +174,13 @@
     "upvote": "Votar",
     "replay": "Ver Repetición",
     "notes": "Notas de la Sesión",
+    "back": "Volver",
+    "failedRsvp": "Error al confirmar asistencia",
+    "questionSubmitted": "¡Pregunta enviada!",
+    "failedQuestion": "Error al enviar la pregunta",
+    "liveNow": "EN VIVO",
+    "rsvpCount": "{count} confirmaciones",
+    "noQuestionsYet": "Aún no hay preguntas. ¡Sé la primera en preguntar!",
     "days": "días",
     "hours": "horas",
     "minutes": "min",
@@ -174,7 +195,20 @@
     "benefit1": "Gana comisión por cada referido",
     "benefit2": "Enlace de seguimiento único",
     "benefit3": "Panel en tiempo real",
-    "benefit4": "Pagos mensuales"
+    "benefit4": "Pagos mensuales",
+    "applicationSubmitted": "¡Solicitud enviada!",
+    "failedApply": "Error al aplicar",
+    "linkCopied": "¡Enlace copiado!",
+    "signInToApply": "Inicia sesión para aplicar al programa de afiliados.",
+    "applicationReview": "Tu solicitud está siendo revisada. Se te notificará cuando sea aprobada.",
+    "yourDashboard": "Tu Panel de Afiliados",
+    "yourReferralLink": "Tu Enlace de Referido",
+    "clicks": "Clics",
+    "conversions": "Conversiones",
+    "totalEarned": "Total Ganado",
+    "balance": "Saldo",
+    "commissionRate": "Tasa de Comisión: {rate}%",
+    "pendingReview": "Tu solicitud está siendo revisada."
   },
   "admin": {
     "title": "Panel de Administración",

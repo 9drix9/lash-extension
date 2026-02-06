@@ -31,7 +31,7 @@ export function Navbar() {
           className="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
           <span className="font-display text-xl font-bold text-gold">
-            Lash Extension Academy
+            {t("appName")}
           </span>
         </Link>
 
@@ -179,7 +179,7 @@ export function Navbar() {
             {/* Close button */}
             <div className="flex items-center justify-between border-b px-4 py-4">
               <span className="font-display text-lg font-bold text-gold">
-                Lash Extension Academy
+                {t("appName")}
               </span>
               <button
                 onClick={() => setMobileOpen(false)}

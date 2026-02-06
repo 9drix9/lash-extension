@@ -79,7 +79,7 @@ export function SessionClient({
       setHasRsvped(true);
       toast.success(t("rsvped"));
     } catch {
-      toast.error("Failed to RSVP");
+      toast.error(t("failedRsvp"));
     }
   };
 
@@ -89,9 +89,9 @@ export function SessionClient({
     try {
       await submitLiveQuestion(session.id, questionText);
       setQuestionText("");
-      toast.success("Question submitted!");
+      toast.success(t("questionSubmitted"));
     } catch {
-      toast.error("Failed to submit question");
+      toast.error(t("failedQuestion"));
     } finally {
       setSubmitting(false);
     }
@@ -123,7 +123,7 @@ export function SessionClient({
           <Link href="/live">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-1" />
-              Back
+              {t("back")}
             </Button>
           </Link>
         </div>
@@ -136,7 +136,7 @@ export function SessionClient({
                 <div className="flex items-center gap-2 mb-2">
                   {isLive && (
                     <Badge className="bg-red-500 text-white animate-pulse">
-                      LIVE
+                      {t("liveNow")}
                     </Badge>
                   )}
                   <h1 className="text-2xl font-display font-bold">
@@ -160,7 +160,7 @@ export function SessionClient({
                   </span>
                   <span className="flex items-center gap-1">
                     <Users className="w-4 h-4" />
-                    {session.rsvpCount} RSVPs
+                    {t("rsvpCount", { count: session.rsvpCount })}
                   </span>
                 </div>
               </div>
@@ -309,7 +309,7 @@ export function SessionClient({
 
             {session.questions.length === 0 && (
               <p className="text-center text-muted-foreground text-sm py-4">
-                No questions yet. Be the first to ask!
+                {t("noQuestionsYet")}
               </p>
             )}
           </CardContent>

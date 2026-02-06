@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { enrollInCourse } from "@/lib/actions/enrollment";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight } from "lucide-react";
@@ -16,6 +17,7 @@ interface EnrollButtonProps {
 
 export function EnrollButton({ courseId, isSignedIn, label }: EnrollButtonProps) {
   const router = useRouter();
+  const t = useTranslations("common");
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleEnroll() {
@@ -35,11 +37,11 @@ export function EnrollButton({ courseId, isSignedIn, label }: EnrollButtonProps)
       }
 
       if (result.enrolled) {
-        toast.success("Welcome! You are now enrolled.");
+        toast.success(t("welcomeEnrolled"));
         router.push("/dashboard");
       }
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("tryAgain"));
       setIsLoading(false);
     }
   }
@@ -53,11 +55,11 @@ export function EnrollButton({ courseId, isSignedIn, label }: EnrollButtonProps)
       {isLoading ? (
         <>
           <Loader2 className="h-4 w-4 animate-spin" />
-          Processing...
+          {t("processing")}
         </>
       ) : (
         <>
-          {isSignedIn ? label : "Sign In to Enroll"}
+          {isSignedIn ? label : t("signInToEnroll")}
           <ArrowRight className="h-4 w-4" />
         </>
       )}

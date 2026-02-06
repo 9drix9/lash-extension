@@ -81,9 +81,9 @@ export function DashboardClient({
         link.download = `certificate-${cert.certificateCode}.pdf`;
         link.click();
       }
-      toast.success("Certificate generated!");
+      toast.success(t("certificateGenerated"));
     } catch {
-      toast.error("Failed to generate certificate");
+      toast.error(t("certificateError"));
     } finally {
       setGenerating(false);
     }

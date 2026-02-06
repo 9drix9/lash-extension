@@ -66,7 +66,7 @@ export function ModuleTile({ module, status, quizPassed }: ModuleTileProps) {
               )}
             >
               <Star className="h-3 w-3" />
-              Bonus
+              {t("bonus")}
             </span>
           )}
         </div>

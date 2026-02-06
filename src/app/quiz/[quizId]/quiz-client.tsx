@@ -83,6 +83,7 @@ export function QuizClient({
   locale,
 }: Props) {
   const t = useTranslations("quiz");
+  const tCommon = useTranslations("common");
 
   // Shuffle questions for retakes
   const [questions] = useState(() =>
@@ -115,7 +116,7 @@ export function QuizClient({
 
   const handleSubmit = async () => {
     if (Object.keys(answers).length < questions.length) {
-      toast.error("Please answer all questions before submitting.");
+      toast.error(t("answerAllQuestions"));
       return;
     }
 
@@ -136,7 +137,7 @@ export function QuizClient({
         toast.success(t("passed"));
       }
     } catch {
-      toast.error("Failed to submit quiz");
+      toast.error(t("failedSubmit"));
     } finally {
       setSubmitting(false);
     }
@@ -164,7 +165,7 @@ export function QuizClient({
             <Link href={`/module/${quiz.moduleId}`}>
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-1" />
-                Back
+                {tCommon("back")}
               </Button>
             </Link>
             <div>
