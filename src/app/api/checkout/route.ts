@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 const INSTALLMENT_COUNT = 3;
 
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
   const totalPrice = course.price; // in cents
 
   if (paymentType === "ONE_TIME") {
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const checkoutSession = await getStripe().checkout.sessions.create({
       mode: "payment",
       customer_email: session.user.email,
       line_items: [
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
   // INSTALLMENT — subscription mode
   const monthlyPrice = Math.ceil(totalPrice / INSTALLMENT_COUNT);
 
-  const checkoutSession = await stripe.checkout.sessions.create({
+  const checkoutSession = await getStripe().checkout.sessions.create({
     mode: "subscription",
     customer_email: session.user.email,
     line_items: [
