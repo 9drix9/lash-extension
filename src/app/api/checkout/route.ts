@@ -37,6 +37,11 @@ export async function POST(req: NextRequest) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const totalPrice = course.price; // in cents
 
+  if (!totalPrice || totalPrice <= 0) {
+    return NextResponse.json({ error: "Course price not set" }, { status: 400 });
+  }
+
+  try {
   if (paymentType === "ONE_TIME") {
     const checkoutSession = await getStripe().checkout.sessions.create({
       mode: "payment",
@@ -128,4 +133,11 @@ export async function POST(req: NextRequest) {
   });
 
   return NextResponse.json({ url: checkoutSession.url });
+  } catch (err) {
+    console.error("Stripe checkout error:", err);
+    return NextResponse.json(
+      { error: "Failed to create checkout session" },
+      { status: 500 }
+    );
+  }
 }

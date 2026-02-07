@@ -48,7 +48,8 @@ export function CheckoutButton({
 
       // Redirect to Stripe Checkout
       window.location.href = data.url;
-    } catch {
+    } catch (err) {
+      console.error("Checkout error:", err);
       toast.error(t("tryAgain"));
       setIsLoading(false);
     }
