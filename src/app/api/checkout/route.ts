@@ -34,7 +34,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Already paid" }, { status: 400 });
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const origin = req.headers.get("origin") || req.headers.get("referer")?.replace(/\/[^/]*$/, "") || "";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || origin || "http://localhost:3000";
   const totalPrice = course.price; // in cents
 
   if (!totalPrice || totalPrice <= 0) {
