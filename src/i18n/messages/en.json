@@ -266,5 +266,21 @@
     "payouts": "Payouts",
     "markPaid": "Mark as Paid",
     "exportCsv": "Export CSV"
+  },
+  "payment": {
+    "payInFull": "Pay in Full",
+    "paymentPlan": "Payment Plan",
+    "perMonth": "mo",
+    "months": "months",
+    "selectPlan": "Select Payment Plan",
+    "bestValue": "Best Value",
+    "checkoutSuccess": "Payment Successful!",
+    "paymentProcessing": "Your payment is being processed...",
+    "redirecting": "You now have full access to the course. Head to your dashboard to start learning!",
+    "goToDashboard": "Go to Dashboard",
+    "accessDenied": "Access Denied",
+    "paymentRequired": "Payment is required to access this course.",
+    "oneTimeDesc": "One-time payment. Instant full access.",
+    "installmentDesc": "Split your payment into easy monthly installments."
   }
 }

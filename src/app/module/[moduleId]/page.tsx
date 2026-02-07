@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocalizedField } from "@/lib/utils";
+import { hasActivePayment } from "@/lib/actions/payment";
 import { ModuleClient } from "./module-client";
 
 export default async function ModulePage({
@@ -28,6 +29,10 @@ export default async function ModulePage({
   });
 
   if (!mod) notFound();
+
+  // Check payment
+  const paid = await hasActivePayment(session.user.id, mod.courseId);
+  if (!paid) redirect("/enroll");
 
   // Check access
   const moduleProgress = await prisma.moduleProgress.findUnique({

@@ -1,18 +1,18 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import { initializeModuleProgress } from "./progress";
 import { revalidatePath } from "next/cache";
 
-export async function enrollInCourse(courseId: string) {
-  const session = await auth();
-  if (!session?.user) throw new Error("Unauthorized");
-
+/**
+ * Enroll a user in a course. Should only be called after payment is confirmed
+ * (from the Stripe webhook handler).
+ */
+export async function enrollInCourse(userId: string, courseId: string) {
   // Check if already enrolled
   const existing = await prisma.moduleProgress.findFirst({
     where: {
-      userId: session.user.id,
+      userId,
       module: { courseId },
     },
   });
@@ -21,42 +21,12 @@ export async function enrollInCourse(courseId: string) {
 
   // Update user enrollment date
   await prisma.user.update({
-    where: { id: session.user.id },
+    where: { id: userId },
     data: { enrolledAt: new Date() },
   });
 
   // Initialize module progress
-  await initializeModuleProgress(session.user.id, courseId);
-
-  // Track affiliate conversion if referral code exists
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-  });
-
-  if (user?.referralCode) {
-    const affiliate = await prisma.affiliate.findUnique({
-      where: { code: user.referralCode, status: "APPROVED" },
-    });
-
-    if (affiliate && affiliate.userId !== session.user.id) {
-      const course = await prisma.course.findUnique({
-        where: { id: courseId },
-      });
-      const amount = course?.price || 0;
-      const commission = Math.round(
-        amount * (affiliate.commissionRate / 100)
-      );
-
-      await prisma.affiliateConversion.create({
-        data: {
-          affiliateId: affiliate.id,
-          email: session.user.email,
-          amount,
-          commission,
-        },
-      });
-    }
-  }
+  await initializeModuleProgress(userId, courseId);
 
   revalidatePath("/dashboard");
   return { enrolled: true };

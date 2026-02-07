@@ -33,6 +33,7 @@ model User {
   liveRsvps        LiveRsvp[]
   affiliate        Affiliate?
   milestoneAwards  MilestoneAward[]
+  payments         Payment[]
 
   @@index([email])
   @@index([role])
@@ -401,4 +402,29 @@ model Payout {
   affiliate Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
 
   @@index([affiliateId])
+}
+
+// ─── PAYMENTS ──────────────────────────────────────────────
+
+model Payment {
+  id                   String   @id @default(cuid())
+  userId               String
+  courseId              String
+  stripeSessionId      String?  @unique
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  paymentType          String   // ONE_TIME or INSTALLMENT
+  status               String   @default("PENDING") // PENDING, ACTIVE, COMPLETED, CANCELLED, PAST_DUE
+  amountTotal          Int      // total course price in cents
+  amountPaid           Int      @default(0)
+  installmentsTotal    Int      @default(1)
+  installmentsPaid     Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([stripeSessionId])
+  @@index([stripeSubscriptionId])
 }

@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocalizedField } from "@/lib/utils";
 import { DashboardClient } from "./dashboard-client";
-import { initializeModuleProgress } from "@/lib/actions/progress";
+import { hasActivePayment } from "@/lib/actions/payment";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -41,17 +41,10 @@ export default async function DashboardPage() {
     );
   }
 
-  // Auto-enroll if not yet enrolled
-  const enrollment = await prisma.moduleProgress.findFirst({
-    where: { userId: session.user.id, module: { courseId: course.id } },
-  });
-
-  if (!enrollment) {
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: { enrolledAt: new Date() },
-    });
-    await initializeModuleProgress(session.user.id, course.id);
+  // Check payment — redirect to enroll if no active payment
+  const paid = await hasActivePayment(session.user.id, course.id);
+  if (!paid) {
+    redirect("/enroll");
   }
 
   // Get all progress data

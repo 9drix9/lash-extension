@@ -267,5 +267,21 @@
     "payouts": "Pagos",
     "markPaid": "Marcar como Pagado",
     "exportCsv": "Exportar CSV"
+  },
+  "payment": {
+    "payInFull": "Pago Completo",
+    "paymentPlan": "Plan de Pagos",
+    "perMonth": "mes",
+    "months": "meses",
+    "selectPlan": "Seleccionar Plan de Pagos",
+    "bestValue": "Mejor Valor",
+    "checkoutSuccess": "¡Pago Exitoso!",
+    "paymentProcessing": "Tu pago está siendo procesado...",
+    "redirecting": "Ahora tienes acceso completo al curso. ¡Ve a tu panel para comenzar a aprender!",
+    "goToDashboard": "Ir al Panel",
+    "accessDenied": "Acceso Denegado",
+    "paymentRequired": "Se requiere pago para acceder a este curso.",
+    "oneTimeDesc": "Pago único. Acceso completo inmediato.",
+    "installmentDesc": "Divide tu pago en cómodas cuotas mensuales."
   }
 }

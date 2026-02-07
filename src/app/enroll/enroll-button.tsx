@@ -1,26 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { enrollInCourse } from "@/lib/actions/enrollment";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
-interface EnrollButtonProps {
+interface CheckoutButtonProps {
   courseId: string;
   isSignedIn: boolean;
+  paymentType: "ONE_TIME" | "INSTALLMENT";
   label: string;
+  variant?: "default" | "outline";
 }
 
-export function EnrollButton({ courseId, isSignedIn, label }: EnrollButtonProps) {
-  const router = useRouter();
+export function CheckoutButton({
+  courseId,
+  isSignedIn,
+  paymentType,
+  label,
+  variant = "default",
+}: CheckoutButtonProps) {
   const t = useTranslations("common");
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleEnroll() {
+  async function handleCheckout() {
     if (!isSignedIn) {
       signIn(undefined, { callbackUrl: "/enroll" });
       return;
@@ -29,28 +34,37 @@ export function EnrollButton({ courseId, isSignedIn, label }: EnrollButtonProps)
     setIsLoading(true);
 
     try {
-      const result = await enrollInCourse(courseId);
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courseId, paymentType }),
+      });
 
-      if (result.alreadyEnrolled) {
-        router.push("/dashboard");
-        return;
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Checkout failed");
       }
 
-      if (result.enrolled) {
-        toast.success(t("welcomeEnrolled"));
-        router.push("/dashboard");
-      }
+      // Redirect to Stripe Checkout
+      window.location.href = data.url;
     } catch {
       toast.error(t("tryAgain"));
       setIsLoading(false);
     }
   }
 
+  const baseClass =
+    variant === "default"
+      ? "h-12 w-full gap-2 rounded-lg bg-gold text-base font-semibold text-white shadow-lg shadow-gold/25 transition-all hover:bg-gold-dark hover:shadow-xl hover:shadow-gold/30"
+      : "h-12 w-full gap-2 rounded-lg border-2 border-gold text-base font-semibold text-gold transition-all hover:bg-gold/5";
+
   return (
     <Button
-      onClick={handleEnroll}
+      onClick={handleCheckout}
       disabled={isLoading}
-      className="h-12 w-full gap-2 rounded-lg bg-gold text-base font-semibold text-white shadow-lg shadow-gold/25 transition-all hover:bg-gold-dark hover:shadow-xl hover:shadow-gold/30"
+      variant={variant}
+      className={baseClass}
     >
       {isLoading ? (
         <>

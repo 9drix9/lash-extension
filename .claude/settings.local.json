@@ -10,7 +10,9 @@
       "Bash(node -e:*)",
       "Bash(findstr:*)",
       "Bash(Select-String -Pattern \"implicitly has an\" -NotMatch)",
-      "Bash(Select-String -Pattern \"error TS\")"
+      "Bash(Select-String -Pattern \"error TS\")",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx dotenv:*)"
     ]
   }
 }
