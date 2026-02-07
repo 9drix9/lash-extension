@@ -282,6 +282,9 @@
     "accessDenied": "Acceso Denegado",
     "paymentRequired": "Se requiere pago para acceder a este curso.",
     "oneTimeDesc": "Pago único. Acceso completo inmediato.",
-    "installmentDesc": "Divide tu pago en cómodas cuotas mensuales."
+    "installmentDesc": "Divide tu pago en cómodas cuotas mensuales.",
+    "saveAmount": "Ahorra ${amount}",
+    "totalCost": "${amount} en total",
+    "introVideo": "Ver Introducción del Curso"
   }
 }

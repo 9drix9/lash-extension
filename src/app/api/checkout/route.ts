@@ -84,8 +84,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: checkoutSession.url });
   }
 
-  // INSTALLMENT — subscription mode
-  const monthlyPrice = Math.ceil(totalPrice / INSTALLMENT_COUNT);
+  // INSTALLMENT — subscription mode ($80 surcharge over pay-in-full)
+  const installmentTotal = totalPrice + 8000;
+  const monthlyPrice = Math.ceil(installmentTotal / INSTALLMENT_COUNT);
 
   const checkoutSession = await getStripe().checkout.sessions.create({
     mode: "subscription",
@@ -128,7 +129,7 @@ export async function POST(req: NextRequest) {
       stripeSessionId: checkoutSession.id,
       paymentType: "INSTALLMENT",
       status: "PENDING",
-      amountTotal: totalPrice,
+      amountTotal: installmentTotal,
       installmentsTotal: INSTALLMENT_COUNT,
     },
   });

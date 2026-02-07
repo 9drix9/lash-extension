@@ -64,7 +64,9 @@ export default async function EnrollPage() {
   }
 
   const totalPrice = course.price; // in cents
-  const monthlyPrice = Math.ceil(totalPrice / INSTALLMENT_COUNT);
+  const installmentTotal = totalPrice + 8000; // $80 surcharge in cents
+  const monthlyPrice = Math.ceil(installmentTotal / INSTALLMENT_COUNT);
+  const savings = (installmentTotal - totalPrice) / 100; // savings in dollars
   const moduleCount = course.modules.length;
   const lessonCount = course.modules.reduce(
     (acc, mod) => acc + mod.lessons.length,
@@ -102,6 +104,22 @@ export default async function EnrollPage() {
               {getLocalizedField(course, "subtitle", locale)}
             </p>
           )}
+        </div>
+
+        {/* Intro Video */}
+        <div className="space-y-3">
+          <h2 className="text-center text-lg font-semibold">
+            {tPayment("introVideo")}
+          </h2>
+          <div className="relative w-full overflow-hidden rounded-xl" style={{ paddingBottom: "56.25%" }}>
+            <iframe
+              className="absolute inset-0 h-full w-full"
+              src="https://www.youtube.com/embed/VIDEO_ID_HERE"
+              title={tPayment("introVideo")}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         </div>
 
         {/* What's included */}
@@ -145,20 +163,25 @@ export default async function EnrollPage() {
         </Card>
 
         {/* Pricing cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
           {/* Pay in Full */}
-          <Card className="relative overflow-hidden border-border/50 shadow-xl shadow-black/5">
+          <Card className="relative flex flex-col overflow-hidden border-border/50 shadow-xl shadow-black/5">
             <div className="h-1.5 w-full bg-gradient-to-r from-gold via-gold-light to-gold" />
             <CardHeader className="text-center space-y-2">
-              <Badge className="mx-auto bg-gold/10 text-gold hover:bg-gold/10 px-3">
-                {tPayment("bestValue")}
-              </Badge>
+              <div className="flex justify-center gap-2">
+                <Badge className="bg-gold/10 text-gold hover:bg-gold/10 px-3">
+                  {tPayment("bestValue")}
+                </Badge>
+                <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/10 px-3">
+                  {tPayment("saveAmount", { amount: savings.toFixed(0) })}
+                </Badge>
+              </div>
               <CardTitle className="font-display text-xl">
                 {tPayment("payInFull")}
               </CardTitle>
               <CardDescription>{tPayment("oneTimeDesc")}</CardDescription>
             </CardHeader>
-            <CardContent className="text-center">
+            <CardContent className="flex-1 flex items-center justify-center text-center">
               <div className="flex items-baseline justify-center gap-1">
                 <span className="font-display text-4xl font-bold text-foreground">
                   ${(totalPrice / 100).toFixed(0)}
@@ -181,7 +204,7 @@ export default async function EnrollPage() {
           </Card>
 
           {/* Payment Plan */}
-          <Card className="relative overflow-hidden border-border/50 shadow-xl shadow-black/5">
+          <Card className="relative flex flex-col overflow-hidden border-border/50 shadow-xl shadow-black/5">
             <div className="h-1.5 w-full bg-gradient-to-r from-rose via-rose/70 to-rose" />
             <CardHeader className="text-center space-y-2">
               <Badge className="mx-auto bg-rose/10 text-rose hover:bg-rose/10 px-3">
@@ -192,18 +215,23 @@ export default async function EnrollPage() {
               </CardTitle>
               <CardDescription>{tPayment("installmentDesc")}</CardDescription>
             </CardHeader>
-            <CardContent className="text-center">
-              <div className="flex items-baseline justify-center gap-1">
-                <span className="font-display text-4xl font-bold text-foreground">
-                  ${(monthlyPrice / 100).toFixed(0)}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  /{tPayment("perMonth")}
-                </span>
+            <CardContent className="flex-1 flex items-center justify-center text-center">
+              <div>
+                <div className="flex items-baseline justify-center gap-1">
+                  <span className="font-display text-4xl font-bold text-foreground">
+                    ${(monthlyPrice / 100).toFixed(0)}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    /{tPayment("perMonth")}
+                  </span>
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {INSTALLMENT_COUNT} {tPayment("months")}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {tPayment("totalCost", { amount: (installmentTotal / 100).toFixed(0) })}
+                </p>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {INSTALLMENT_COUNT} {tPayment("months")}
-              </p>
             </CardContent>
             <Separator />
             <CardFooter className="flex-col gap-3 pt-6 pb-6">

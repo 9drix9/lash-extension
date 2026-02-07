@@ -281,6 +281,9 @@
     "accessDenied": "Access Denied",
     "paymentRequired": "Payment is required to access this course.",
     "oneTimeDesc": "One-time payment. Instant full access.",
-    "installmentDesc": "Split your payment into easy monthly installments."
+    "installmentDesc": "Split your payment into easy monthly installments.",
+    "saveAmount": "Save ${amount}",
+    "totalCost": "${amount} total",
+    "introVideo": "Watch Course Introduction"
   }
 }
