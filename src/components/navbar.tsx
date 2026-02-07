@@ -26,14 +26,16 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-2 transition-opacity hover:opacity-80"
-        >
-          <span className="font-display text-xl font-bold text-gold">
-            {t("appName")}
-          </span>
-        </Link>
+        <div className="flex flex-1 items-center">
+          <Link
+            href="/"
+            className="flex items-center gap-2 transition-opacity hover:opacity-80"
+          >
+            <span className="font-display text-xl font-bold text-gold">
+              {t("appName")}
+            </span>
+          </Link>
+        </div>
 
         {/* Desktop nav links */}
         <nav className="hidden items-center gap-1 md:flex">
@@ -53,7 +55,7 @@ export function Navbar() {
         </nav>
 
         {/* Right side: language toggle + user */}
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden flex-1 items-center justify-end gap-2 md:flex">
           <LanguageToggle />
 
           {status === "loading" ? (
