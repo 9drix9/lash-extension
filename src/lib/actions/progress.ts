@@ -29,6 +29,11 @@ export async function markLessonComplete(lessonId: string) {
     },
   });
 
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { lastActivityAt: new Date() },
+  });
+
   revalidatePath("/dashboard");
   revalidatePath(`/module`);
 }
@@ -71,6 +76,11 @@ export async function updateVideoProgress(
       completed: shouldComplete,
       completedAt: shouldComplete ? new Date() : null,
     },
+  });
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { lastActivityAt: new Date() },
   });
 }
 
@@ -195,6 +205,11 @@ export async function unlockNextModule(userId: string, moduleId: string) {
       },
     });
   }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { lastActivityAt: new Date() },
+  });
 
   // Check milestones
   await checkMilestones(userId, currentModule.courseId);

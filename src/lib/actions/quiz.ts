@@ -79,6 +79,11 @@ export async function submitQuiz(quizId: string, answers: QuizAnswer[]) {
     },
   });
 
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { lastActivityAt: new Date() },
+  });
+
   // If passed, unlock next module
   if (passed) {
     await unlockNextModule(session.user.id, quiz.moduleId);

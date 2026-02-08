@@ -18,10 +18,11 @@ model User {
   image         String?
   role          String    @default("STUDENT")
   locale        String    @default("en")
-  enrolledAt    DateTime?
-  referralCode  String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  enrolledAt     DateTime?
+  lastActivityAt DateTime?
+  referralCode   String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   accounts         Account[]
   sessions         Session[]
@@ -34,9 +35,13 @@ model User {
   affiliate        Affiliate?
   milestoneAwards  MilestoneAward[]
   payments         Payment[]
+  adminNotes       AdminNote[] @relation("AdminNotes")
+  studentNotes     AdminNote[] @relation("StudentNotes")
+  auditLogs        AuditLog[]  @relation("AuditLogs")
 
   @@index([email])
   @@index([role])
+  @@index([lastActivityAt])
 }
 
 model Account {
@@ -427,4 +432,39 @@ model Payment {
   @@index([userId])
   @@index([stripeSessionId])
   @@index([stripeSubscriptionId])
+}
+
+// ─── ADMIN NOTES ──────────────────────────────────────────
+
+model AdminNote {
+  id        String   @id @default(cuid())
+  adminId   String
+  studentId String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  admin   User @relation("AdminNotes", fields: [adminId], references: [id], onDelete: Cascade)
+  student User @relation("StudentNotes", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([adminId])
+}
+
+// ─── AUDIT LOG ────────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  adminId    String
+  action     String
+  targetType String
+  targetId   String
+  details    Json?
+  createdAt  DateTime @default(now())
+
+  admin User @relation("AuditLogs", fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([createdAt])
+  @@index([action])
 }

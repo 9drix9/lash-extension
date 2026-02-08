@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
-import { getStudents } from "@/lib/actions/admin";
+import { getStudentsEnhanced } from "@/lib/actions/admin-student";
 import { StudentsClient } from "./students-client";
 
 export default async function StudentsPage() {
@@ -10,19 +10,7 @@ export default async function StudentsPage() {
   if (!session?.user || session.user.role !== "ADMIN") redirect("/");
 
   const t = await getTranslations("admin");
-  const students = await getStudents();
-
-  const studentsData = students.map((student) => ({
-    id: student.id,
-    name: student.name || "No name",
-    email: student.email,
-    enrolledAt: student.enrolledAt?.toISOString() || null,
-    completedModules: student.moduleProgress.filter(
-      (mp) => mp.status === "COMPLETED"
-    ).length,
-    quizAttempts: student._count.quizAttempts,
-    certificates: student._count.certificates,
-  }));
+  const students = await getStudentsEnhanced();
 
   return (
     <div className="min-h-screen bg-background">
@@ -32,18 +20,18 @@ export default async function StudentsPage() {
             href="/admin"
             className="text-sm text-muted-foreground hover:text-foreground"
           >
-            &larr; {t("title")}
+            &larr; {t("backToAdmin")}
           </Link>
         </div>
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">{t("students")}</h1>
           <p className="mt-1 text-muted-foreground">
-            {studentsData.length} students total
+            {students.length} {t("totalStudents").toLowerCase()}
           </p>
         </div>
 
-        <StudentsClient students={studentsData} />
+        <StudentsClient students={students} />
       </div>
     </div>
   );

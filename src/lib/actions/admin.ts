@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { logAuditEvent } from "./admin-audit";
 
 async function requireAdmin() {
   const session = await auth();
@@ -74,7 +75,7 @@ export async function getStudents() {
 }
 
 export async function resetStudentProgress(studentId: string) {
-  await requireAdmin();
+  const session = await requireAdmin();
 
   await prisma.$transaction([
     prisma.lessonProgress.deleteMany({ where: { userId: studentId } }),
@@ -102,6 +103,8 @@ export async function resetStudentProgress(studentId: string) {
       });
     }
   }
+
+  await logAuditEvent(session.user.id, "RESET_PROGRESS", "USER", studentId);
 
   revalidatePath("/admin/students");
 }
