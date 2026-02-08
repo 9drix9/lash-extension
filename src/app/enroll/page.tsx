@@ -106,6 +106,22 @@ export default async function EnrollPage() {
           )}
         </div>
 
+        {/* Intro Video */}
+        <div className="space-y-3">
+          <h2 className="text-center text-lg font-semibold">
+            {tPayment("introVideo")}
+          </h2>
+          <div className="relative w-full overflow-hidden rounded-xl" style={{ paddingBottom: "56.25%" }}>
+            <iframe
+              className="absolute inset-0 h-full w-full"
+              src="https://www.youtube.com/embed/VIDEO_ID_HERE"
+              title={tPayment("introVideo")}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+
         {/* What's included */}
         <Card className="border-border/50">
           <CardContent className="pt-6 space-y-6">

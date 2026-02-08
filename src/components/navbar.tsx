@@ -181,10 +181,10 @@ export function Navbar({ isPaid }: { isPaid: boolean }) {
 
       {/* Mobile drawer — rendered OUTSIDE <header> so it escapes the stacking context */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-[100] md:hidden">
+        <div className="fixed inset-0 z-[999] md:hidden" role="dialog" aria-modal="true">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/50 transition-opacity"
+            className="absolute inset-0 bg-black/50"
             onClick={() => setMobileOpen(false)}
           />
 
@@ -192,8 +192,8 @@ export function Navbar({ isPaid }: { isPaid: boolean }) {
           <div
             className={cn(
               "absolute right-0 top-0 h-full w-72",
-              "bg-white shadow-xl",
-              "flex flex-col",
+              "bg-background shadow-xl",
+              "flex flex-col overflow-y-auto",
               "animate-fade-in"
             )}
           >
