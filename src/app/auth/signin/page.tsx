@@ -24,7 +24,7 @@ export default function SignInPage() {
     setIsLoading(true);
     setError(null);
     try {
-      await signIn("google", { callbackUrl: "/dashboard" });
+      await signIn("google", { callbackUrl: "/enroll" });
     } catch {
       setError(tCommon("error"));
       setIsLoading(false);
@@ -88,7 +88,7 @@ export default function SignInPage() {
                 />
               </svg>
             )}
-            Sign in with Google
+            {t("signInGoogle")}
           </Button>
         </CardContent>
       </Card>

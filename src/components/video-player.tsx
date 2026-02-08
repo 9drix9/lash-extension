@@ -37,7 +37,7 @@ function getEmbedUrl(provider: string, url: string): string {
     let videoId = "";
     try {
       const urlObj = new URL(url);
-      videoId = urlObj.pathname.replace("/", "").split("/")[0];
+      videoId = urlObj.pathname.split("/").filter(Boolean).pop() || "";
     } catch {
       const match = url.match(/vimeo\.com\/(\d+)/);
       videoId = match ? match[1] : url;

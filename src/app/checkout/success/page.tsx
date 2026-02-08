@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { CheckCircle2, Loader2 } from "lucide-react";
@@ -16,10 +16,12 @@ import { Button } from "@/components/ui/button";
 
 export default function CheckoutSuccessPage() {
   const t = useTranslations("payment");
+  const router = useRouter();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [verifying, setVerifying] = useState(true);
   const [verified, setVerified] = useState(false);
+  const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
     if (!sessionId) {
@@ -46,6 +48,23 @@ export default function CheckoutSuccessPage() {
     verify();
   }, [sessionId]);
 
+  useEffect(() => {
+    if (verifying || !verified) return;
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          router.push("/dashboard");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [verifying, verified, router]);
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md text-center">
@@ -63,7 +82,9 @@ export default function CheckoutSuccessPage() {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            {verifying ? t("pleaseWait") : t("redirecting")}
+            {verifying
+              ? t("pleaseWait")
+              : t("redirectingCountdown", { seconds: countdown })}
           </p>
         </CardContent>
         <CardFooter className="justify-center">

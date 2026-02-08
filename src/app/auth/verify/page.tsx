@@ -37,8 +37,7 @@ export default async function VerifyPage() {
         <CardContent className="space-y-6 pt-2">
           <div className="rounded-lg bg-muted/60 px-4 py-3">
             <p className="text-sm text-muted-foreground">
-              The link will expire in 24 hours. Check your spam folder if you
-              don&apos;t see it.
+              {t("linkExpiry")}
             </p>
           </div>
 
@@ -49,7 +48,7 @@ export default async function VerifyPage() {
           >
             <Link href="/auth/signin">
               <ArrowLeft className="h-4 w-4" />
-              Back to sign in
+              {t("backToSignIn")}
             </Link>
           </Button>
         </CardContent>

@@ -66,6 +66,11 @@ export function ModuleClient({
 
   const currentLesson = lessonStates[activeLesson];
 
+  const handleLessonSelect = (index: number) => {
+    setActiveLesson(index);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleMarkComplete = async () => {
     try {
       await markLessonComplete(currentLesson.id);
@@ -111,9 +116,54 @@ export function ModuleClient({
           </div>
         </div>
 
+        {/* Mobile Lesson Selector */}
+        <div className="lg:hidden mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <h3 className="font-semibold text-sm">{t("lessons")}</h3>
+            <span className="text-xs text-muted-foreground">
+              {completedCount}/{lessons.length}
+            </span>
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {lessonStates.map((lesson, index) => (
+              <button
+                key={lesson.id}
+                onClick={() => handleLessonSelect(index)}
+                className={cn(
+                  "flex-shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors border",
+                  activeLesson === index
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : lesson.completed
+                      ? "bg-green-50 text-green-800 border-green-200"
+                      : "bg-white text-muted-foreground border-border hover:bg-muted"
+                )}
+              >
+                {lesson.completed && (
+                  <CheckCircle2 className="w-3 h-3 flex-shrink-0" />
+                )}
+                {lesson.order}
+              </button>
+            ))}
+            {quizId && (
+              <Link
+                href={`/quiz/${quizId}`}
+                className={cn(
+                  "flex-shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors border",
+                  quizPassed
+                    ? "bg-green-50 text-green-800 border-green-200"
+                    : "bg-primary/5 text-primary border-primary/20 hover:bg-primary/10"
+                )}
+              >
+                <FileText className="w-3 h-3" />
+                {t("quiz")}
+              </Link>
+            )}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Lesson Sidebar */}
-          <div className="lg:col-span-1">
+          {/* Lesson Sidebar - Desktop only */}
+          <div className="hidden lg:block lg:col-span-1">
             <Card>
               <CardContent className="p-4">
                 <h3 className="font-semibold text-sm mb-1">{t("lessons")}</h3>
@@ -124,7 +174,7 @@ export function ModuleClient({
                   {lessonStates.map((lesson, index) => (
                     <button
                       key={lesson.id}
-                      onClick={() => setActiveLesson(index)}
+                      onClick={() => handleLessonSelect(index)}
                       className={cn(
                         "w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex items-center gap-2",
                         activeLesson === index
@@ -236,7 +286,7 @@ export function ModuleClient({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setActiveLesson(Math.max(0, activeLesson - 1))}
+                    onClick={() => handleLessonSelect(Math.max(0, activeLesson - 1))}
                     disabled={activeLesson === 0}
                   >
                     <ArrowLeft className="w-4 h-4 mr-1" />
@@ -247,7 +297,7 @@ export function ModuleClient({
                     <Button
                       size="sm"
                       onClick={() =>
-                        setActiveLesson(
+                        handleLessonSelect(
                           Math.min(lessons.length - 1, activeLesson + 1)
                         )
                       }

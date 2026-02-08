@@ -94,7 +94,10 @@
     "checkEmail": "Check your email",
     "checkEmailDesc": "A sign-in link has been sent to your email address.",
     "magicLink": "Send Magic Link",
-    "orContinue": "Or continue with"
+    "orContinue": "Or continue with",
+    "signInGoogle": "Sign in with Google",
+    "linkExpiry": "The link will expire in 24 hours. Check your spam folder if you don't see it.",
+    "backToSignIn": "Back to sign in"
   },
   "dashboard": {
     "title": "My Dashboard",
@@ -279,6 +282,7 @@
     "pleaseWait": "Please wait while we confirm your payment.",
     "paymentProcessing": "Your payment is being processed...",
     "redirecting": "You now have full access to the course. Head to your dashboard to start learning!",
+    "redirectingCountdown": "You now have full access to the course. Redirecting to dashboard in {seconds}s...",
     "goToDashboard": "Go to Dashboard",
     "accessDenied": "Access Denied",
     "paymentRequired": "Payment is required to access this course.",

@@ -1,10 +1,23 @@
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
+import { getActiveCourse } from "@/lib/actions/enrollment";
+import { hasActivePayment } from "@/lib/actions/payment";
 import { getLiveSessions } from "@/lib/actions/live";
 import { LiveSessionsClient } from "./live-client";
 
 export default async function LivePage() {
   const session = await auth();
+
+  if (!session?.user) {
+    redirect("/auth/signin");
+  }
+
+  const course = await getActiveCourse();
+  if (!course || !(await hasActivePayment(session.user.id, course.id))) {
+    redirect("/enroll");
+  }
+
   const t = await getTranslations("live");
   const { upcoming, past } = await getLiveSessions();
 

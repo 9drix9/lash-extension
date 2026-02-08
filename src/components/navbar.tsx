@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { LanguageToggle } from "@/components/language-toggle";
 
-export function Navbar() {
+export function Navbar({ isPaid }: { isPaid: boolean }) {
   const t = useTranslations("common");
   const { data: session, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -17,10 +17,12 @@ export function Navbar() {
 
   const isAdmin = session?.user?.role === "ADMIN";
 
-  const navLinks = [
-    { href: "/dashboard", label: t("dashboard") },
-    { href: "/live", label: t("liveQA") },
-  ];
+  const navLinks = isPaid
+    ? [
+        { href: "/dashboard", label: t("dashboard") },
+        { href: "/live", label: t("liveQA") },
+      ]
+    : [{ href: "/enroll", label: t("enroll") }];
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {

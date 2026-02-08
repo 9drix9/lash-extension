@@ -212,7 +212,6 @@ export function DashboardClient({
 
         {/* Module Grid */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">{modules.length > 0 ? "" : ""}</h2>
           <ModuleGrid modules={modules} />
         </div>
       </div>

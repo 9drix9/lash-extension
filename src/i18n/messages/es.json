@@ -95,7 +95,10 @@
     "checkEmail": "Revisa tu correo",
     "checkEmailDesc": "Se ha enviado un enlace de inicio de sesión a tu correo electrónico.",
     "magicLink": "Enviar Enlace Mágico",
-    "orContinue": "O continuar con"
+    "orContinue": "O continuar con",
+    "signInGoogle": "Iniciar sesión con Google",
+    "linkExpiry": "El enlace expira en 24 horas. Revisa tu carpeta de spam si no lo ves.",
+    "backToSignIn": "Volver a iniciar sesión"
   },
   "dashboard": {
     "title": "Mi Panel",
@@ -280,6 +283,7 @@
     "pleaseWait": "Por favor espera mientras confirmamos tu pago.",
     "paymentProcessing": "Tu pago está siendo procesado...",
     "redirecting": "Ahora tienes acceso completo al curso. ¡Ve a tu panel para comenzar a aprender!",
+    "redirectingCountdown": "Ahora tienes acceso completo al curso. Redirigiendo al panel en {seconds}s...",
     "goToDashboard": "Ir al Panel",
     "accessDenied": "Acceso Denegado",
     "paymentRequired": "Se requiere pago para acceder a este curso.",
