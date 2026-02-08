@@ -266,6 +266,38 @@ export async function getStudentNotes(studentId: string) {
   }));
 }
 
+// ─── STUDENT QUIZ HISTORY ───────────────────────────
+
+export async function getStudentQuizHistory(studentId: string) {
+  await requireAdmin();
+
+  const attempts = await prisma.quizAttempt.findMany({
+    where: { userId: studentId },
+    include: {
+      quiz: {
+        select: {
+          id: true,
+          titleEn: true,
+          module: { select: { titleEn: true, order: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return attempts.map((a) => ({
+    id: a.id,
+    quizId: a.quizId,
+    quizTitle: a.quiz.titleEn,
+    moduleTitle: a.quiz.module.titleEn,
+    moduleOrder: a.quiz.module.order,
+    score: Math.round(a.score),
+    passed: a.passed,
+    attemptNumber: a.attemptNumber,
+    createdAt: a.createdAt.toISOString(),
+  }));
+}
+
 // ─── ADMIN ACTIONS ──────────────────────────────────
 
 export async function addAdminNote(studentId: string, content: string) {
