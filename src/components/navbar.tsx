@@ -167,13 +167,13 @@ export function Navbar() {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/40 md:hidden"
+            className="fixed inset-0 z-[60] bg-black/50 md:hidden"
             onClick={() => setMobileOpen(false)}
           />
           <div
             className={cn(
-              "fixed right-0 top-0 z-50 h-full w-72",
-              "bg-background shadow-xl",
+              "fixed right-0 top-0 z-[70] h-full w-72",
+              "bg-white shadow-xl",
               "flex flex-col",
               "animate-fade-in md:hidden"
             )}

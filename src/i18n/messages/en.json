@@ -275,6 +275,8 @@
     "selectPlan": "Select Payment Plan",
     "bestValue": "Best Value",
     "checkoutSuccess": "Payment Successful!",
+    "verifyingPayment": "Verifying Payment...",
+    "pleaseWait": "Please wait while we confirm your payment.",
     "paymentProcessing": "Your payment is being processed...",
     "redirecting": "You now have full access to the course. Head to your dashboard to start learning!",
     "goToDashboard": "Go to Dashboard",

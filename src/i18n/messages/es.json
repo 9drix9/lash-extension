@@ -276,6 +276,8 @@
     "selectPlan": "Seleccionar Plan de Pagos",
     "bestValue": "Mejor Valor",
     "checkoutSuccess": "¡Pago Exitoso!",
+    "verifyingPayment": "Verificando Pago...",
+    "pleaseWait": "Por favor espera mientras confirmamos tu pago.",
     "paymentProcessing": "Tu pago está siendo procesado...",
     "redirecting": "Ahora tienes acceso completo al curso. ¡Ve a tu panel para comenzar a aprender!",
     "goToDashboard": "Ir al Panel",
