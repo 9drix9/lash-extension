@@ -116,6 +116,39 @@ export default async function DashboardPage() {
     (m) => m.status === "UNLOCKED" && !m.isBonus
   );
 
+  // Quick Actions: find first uncompleted lesson in current module
+  let resumeLesson: { moduleId: string; lessonId: string } | null = null;
+  if (nextModule) {
+    const mod = course.modules.find((m) => m.id === nextModule.id);
+    if (mod) {
+      const firstUncompleted = mod.lessons.find(
+        (l) => !lessonProgress.some((lp) => lp.lessonId === l.id && lp.completed)
+      );
+      if (firstUncompleted) {
+        resumeLesson = { moduleId: mod.id, lessonId: firstUncompleted.id };
+      }
+    }
+  }
+
+  // Quick Actions: most recent failed quiz
+  const lastFailedQuizId = quizAttempts.find((a) => !a.passed)?.quizId || null;
+
+  // Certificate Progress: quiz stats
+  const modulesWithQuizzes = course.modules.filter((m) => !m.isBonus && m.quiz);
+  const quizzesRequired = modulesWithQuizzes.length;
+  const quizzesPassed = modulesWithQuizzes.filter((m) =>
+    quizAttempts.some((a) => a.quizId === m.quiz!.id && a.passed)
+  ).length;
+
+  // Enhanced Milestones: all milestones with earned status
+  const allMilestones = course.milestones.map((ms) => ({
+    id: ms.id,
+    triggerType: ms.triggerType,
+    title: getLocalizedField(ms, "title", locale),
+    badgeEmoji: ms.badgeEmoji,
+    earned: milestoneAwards.some((ma) => ma.milestoneId === ms.id),
+  }));
+
   const milestones = milestoneAwards.map((ma) => ({
     id: ma.milestoneId,
     title: getLocalizedField(ma.milestone, "title", locale),
@@ -140,6 +173,11 @@ export default async function DashboardPage() {
       } : null}
       courseId={course.id}
       allComplete={completedCount >= requiredModules.length}
+      resumeLesson={resumeLesson}
+      lastFailedQuizId={lastFailedQuizId}
+      quizzesRequired={quizzesRequired}
+      quizzesPassed={quizzesPassed}
+      allMilestones={allMilestones}
     />
   );
 }

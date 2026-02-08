@@ -7,17 +7,21 @@ import {
   BookOpen,
   ChevronRight,
   Download,
-  Trophy,
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ModuleGrid } from "@/components/module-grid";
 import { ProgressBar } from "@/components/progress-bar";
 import { generateStudentCertificate } from "@/lib/actions/certificate";
 import { useState } from "react";
 import { toast } from "sonner";
+
+import { QuickActions } from "./quick-actions";
+import { CourseRoadmap } from "./course-roadmap";
+import { CertificateProgress } from "./certificate-progress";
+import { ResourcesVault } from "./resources-vault";
+import { EnhancedMilestones } from "./enhanced-milestones";
 
 interface ModuleData {
   id: string;
@@ -43,6 +47,14 @@ interface MilestoneData {
   awardedAt: string;
 }
 
+interface AllMilestoneData {
+  id: string;
+  triggerType: string;
+  title: string;
+  badgeEmoji: string;
+  earned: boolean;
+}
+
 interface Props {
   userName: string;
   modules: ModuleData[];
@@ -54,6 +66,11 @@ interface Props {
   certificate: { code: string; pdfUrl: string | null } | null;
   courseId: string;
   allComplete: boolean;
+  resumeLesson: { moduleId: string; lessonId: string } | null;
+  lastFailedQuizId: string | null;
+  quizzesRequired: number;
+  quizzesPassed: number;
+  allMilestones: AllMilestoneData[];
 }
 
 export function DashboardClient({
@@ -67,6 +84,11 @@ export function DashboardClient({
   certificate,
   courseId,
   allComplete,
+  resumeLesson,
+  lastFailedQuizId,
+  quizzesRequired,
+  quizzesPassed,
+  allMilestones,
 }: Props) {
   const t = useTranslations("dashboard");
   const [generating, setGenerating] = useState(false);
@@ -92,7 +114,7 @@ export function DashboardClient({
   return (
     <div className="min-h-screen bg-gray-50/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+        {/* 1. Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-display font-bold text-foreground">
             {t("title")}
@@ -102,7 +124,7 @@ export function DashboardClient({
           </p>
         </div>
 
-        {/* Progress + Next Action Row */}
+        {/* 2. Progress + Next Action Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Progress Card */}
           <Card className="lg:col-span-2">
@@ -181,36 +203,44 @@ export function DashboardClient({
           </Card>
         </div>
 
-        {/* Milestones */}
-        {milestones.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-primary" />
-              {t("milestones")}
-            </h2>
-            <div className="flex gap-3 overflow-x-auto pb-2">
-              {milestones.map((m) => (
-                <div
-                  key={m.id}
-                  className="flex-shrink-0 bg-white rounded-xl border p-4 min-w-[200px] shadow-sm"
-                >
-                  <div className="text-2xl mb-2">{m.badgeEmoji}</div>
-                  <p className="font-medium text-sm">{m.title}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {m.message}
-                  </p>
-                  {m.nextStep && (
-                    <Badge variant="secondary" className="mt-2 text-xs">
-                      {m.nextStep}
-                    </Badge>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* 3. Quick Actions */}
+        <div className="mb-8">
+          <QuickActions
+            resumeLesson={resumeLesson}
+            lastFailedQuizId={lastFailedQuizId}
+          />
+        </div>
 
-        {/* Module Grid */}
+        {/* 4. Course Roadmap */}
+        <div className="mb-8">
+          <CourseRoadmap modules={modules} />
+        </div>
+
+        {/* 5. Certificate Progress + Enhanced Milestones */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <CertificateProgress
+            completedCount={completedCount}
+            totalRequired={totalRequired}
+            quizzesPassed={quizzesPassed}
+            quizzesRequired={quizzesRequired}
+            allComplete={allComplete}
+            certificate={certificate}
+            courseId={courseId}
+            onGetCertificate={handleGetCertificate}
+            generating={generating}
+          />
+          <EnhancedMilestones
+            earnedMilestones={milestones}
+            allMilestones={allMilestones}
+          />
+        </div>
+
+        {/* 6. Resources Vault */}
+        <div className="mb-8">
+          <ResourcesVault />
+        </div>
+
+        {/* 7. Module Grid */}
         <div>
           <ModuleGrid modules={modules} />
         </div>
