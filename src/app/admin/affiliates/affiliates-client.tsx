@@ -180,8 +180,8 @@ export function AffiliatesClient({
           size="sm"
           onClick={() => setShowPayouts(!showPayouts)}
         >
-          {showPayouts ? "Show Affiliates" : t("payouts")} (
-          {payouts.filter((p) => p.status === "PENDING").length} pending)
+          {showPayouts ? t("showAffiliates") : t("payouts")} (
+          {payouts.filter((p) => p.status === "PENDING").length} {t("pending")})
         </Button>
       </div>
 
@@ -191,7 +191,7 @@ export function AffiliatesClient({
           <CardHeader>
             <CardTitle className="text-lg">{t("affiliates")}</CardTitle>
             <CardDescription>
-              {affiliates.length} affiliates registered
+              {t("affiliatesRegistered", { count: affiliates.length })}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
@@ -200,28 +200,28 @@ export function AffiliatesClient({
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                      Affiliate
+                      {t("affiliateLabel")}
                     </th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                      Code
+                      {t("code")}
                     </th>
                     <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
-                      Status
+                      {t("status")}
                     </th>
                     <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
-                      Rate
+                      {t("rate")}
                     </th>
                     <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
-                      Clicks
+                      {t("clicksLabel")}
                     </th>
                     <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
-                      Conv.
+                      {t("conversionsLabel")}
                     </th>
                     <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
                       {t("commission")}
                     </th>
                     <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
-                      Actions
+                      {t("actions")}
                     </th>
                   </tr>
                 </thead>
@@ -232,7 +232,7 @@ export function AffiliatesClient({
                         colSpan={8}
                         className="px-4 py-8 text-center text-sm text-muted-foreground"
                       >
-                        No affiliates found.
+                        {t("noAffiliates")}
                       </td>
                     </tr>
                   )}
@@ -300,16 +300,14 @@ export function AffiliatesClient({
                             <Dialog>
                               <DialogTrigger asChild>
                                 <Button variant="outline" size="sm">
-                                  Payout
+                                  {t("payoutLabel")}
                                 </Button>
                               </DialogTrigger>
                               <DialogContent>
                                 <DialogHeader>
-                                  <DialogTitle>Create Payout</DialogTitle>
+                                  <DialogTitle>{t("createPayout")}</DialogTitle>
                                   <DialogDescription>
-                                    Create a payout for {aff.userName} (
-                                    {aff.code}). Total earned:{" "}
-                                    {formatCents(aff.totalCommission)}
+                                    {t("createPayoutDesc", { name: aff.userName, code: aff.code, amount: formatCents(aff.totalCommission) })}
                                   </DialogDescription>
                                 </DialogHeader>
                                 <form
@@ -324,7 +322,7 @@ export function AffiliatesClient({
                                 >
                                   <div className="space-y-2">
                                     <Label htmlFor={`payout-${aff.id}`}>
-                                      Amount ($)
+                                      {t("amountDollar")}
                                     </Label>
                                     <Input
                                       id={`payout-${aff.id}`}
@@ -361,7 +359,7 @@ export function AffiliatesClient({
                                 handleStatusChange(aff.id, "APPROVED")
                               }
                             >
-                              Re-approve
+                              {t("reApprove")}
                             </Button>
                           )}
                         </div>
@@ -379,8 +377,7 @@ export function AffiliatesClient({
           <CardHeader>
             <CardTitle className="text-lg">{t("payouts")}</CardTitle>
             <CardDescription>
-              {payouts.length} payouts total,{" "}
-              {payouts.filter((p) => p.status === "PENDING").length} pending
+              {t("payoutsInfo", { total: payouts.length, pending: payouts.filter((p) => p.status === "PENDING").length })}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
@@ -389,25 +386,25 @@ export function AffiliatesClient({
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                      Affiliate
+                      {t("affiliateLabel")}
                     </th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                      Code
+                      {t("code")}
                     </th>
                     <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
-                      Amount
+                      {t("payoutAmount")}
                     </th>
                     <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
-                      Status
+                      {t("status")}
                     </th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                      Created
+                      {t("payoutCreated")}
                     </th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                      Paid At
+                      {t("paidAtLabel")}
                     </th>
                     <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
-                      Actions
+                      {t("actions")}
                     </th>
                   </tr>
                 </thead>
@@ -418,7 +415,7 @@ export function AffiliatesClient({
                         colSpan={7}
                         className="px-4 py-8 text-center text-sm text-muted-foreground"
                       >
-                        No payouts found.
+                        {t("noPayouts")}
                       </td>
                     </tr>
                   )}
@@ -441,7 +438,7 @@ export function AffiliatesClient({
                             payout.status === "PAID" ? "default" : "secondary"
                           }
                         >
-                          {payout.status}
+                          {payout.status === "PAID" ? t("markPaid") : t("pending")}
                         </Badge>
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">

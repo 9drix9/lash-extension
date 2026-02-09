@@ -41,44 +41,26 @@ interface Props {
   initialFeed: Feed;
 }
 
-const eventConfig: Record<
-  string,
-  { icon: React.ReactNode; label: string; color: string }
-> = {
-  enrollment: {
-    icon: <UserPlus className="h-4 w-4" />,
-    label: "Enrolled",
-    color: "text-blue-500 bg-blue-50",
-  },
-  module_complete: {
-    icon: <BookOpen className="h-4 w-4" />,
-    label: "Module Complete",
-    color: "text-green-600 bg-green-50",
-  },
-  quiz_pass: {
-    icon: <CheckCircle2 className="h-4 w-4" />,
-    label: "Quiz Passed",
-    color: "text-green-600 bg-green-50",
-  },
-  quiz_fail: {
-    icon: <XCircle className="h-4 w-4" />,
-    label: "Quiz Failed",
-    color: "text-red-500 bg-red-50",
-  },
-  certificate: {
-    icon: <Award className="h-4 w-4" />,
-    label: "Certificate",
-    color: "text-amber-600 bg-amber-50",
-  },
-  admin_action: {
-    icon: <Shield className="h-4 w-4" />,
-    label: "Admin",
-    color: "text-purple-600 bg-purple-50",
-  },
+const eventIcons: Record<string, { icon: React.ReactNode; color: string }> = {
+  enrollment: { icon: <UserPlus className="h-4 w-4" />, color: "text-blue-500 bg-blue-50" },
+  module_complete: { icon: <BookOpen className="h-4 w-4" />, color: "text-green-600 bg-green-50" },
+  quiz_pass: { icon: <CheckCircle2 className="h-4 w-4" />, color: "text-green-600 bg-green-50" },
+  quiz_fail: { icon: <XCircle className="h-4 w-4" />, color: "text-red-500 bg-red-50" },
+  certificate: { icon: <Award className="h-4 w-4" />, color: "text-amber-600 bg-amber-50" },
+  admin_action: { icon: <Shield className="h-4 w-4" />, color: "text-purple-600 bg-purple-50" },
 };
 
 export function ActivityClient({ initialFeed }: Props) {
   const t = useTranslations("admin");
+
+  const eventLabels: Record<string, string> = {
+    enrollment: t("eventEnrolled"),
+    module_complete: t("eventModuleComplete"),
+    quiz_pass: t("eventQuizPassed"),
+    quiz_fail: t("eventQuizFailed"),
+    certificate: t("eventCertificate"),
+    admin_action: t("eventAdmin"),
+  };
   const [feed, setFeed] = useState(initialFeed);
   const [filter, setFilter] = useState<string>("all");
   const [isPending, startTransition] = useTransition();
@@ -95,10 +77,10 @@ export function ActivityClient({ initialFeed }: Props) {
     const now = new Date();
     const diff = now.getTime() - d.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
-    if (hours < 1) return `${Math.floor(diff / (1000 * 60))}m ago`;
-    if (hours < 24) return `${hours}h ago`;
+    if (hours < 1) return t("minutesAgo", { count: Math.floor(diff / (1000 * 60)) });
+    if (hours < 24) return t("hoursAgo", { count: hours });
     const days = Math.floor(hours / 24);
-    if (days < 7) return `${days}d ago`;
+    if (days < 7) return t("daysAgo", { count: days });
     return d.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -111,13 +93,13 @@ export function ActivityClient({ initialFeed }: Props) {
       : feed.events.filter((e) => e.type === filter);
 
   const filters = [
-    { key: "all", label: "All" },
-    { key: "enrollment", label: "Enrollments" },
-    { key: "module_complete", label: "Modules" },
-    { key: "quiz_pass", label: "Passed" },
-    { key: "quiz_fail", label: "Failed" },
-    { key: "certificate", label: "Certificates" },
-    { key: "admin_action", label: "Admin" },
+    { key: "all", label: t("filterAll") },
+    { key: "enrollment", label: t("filterEnrollments") },
+    { key: "module_complete", label: t("filterModulesLabel") },
+    { key: "quiz_pass", label: t("filterPassed") },
+    { key: "quiz_fail", label: t("filterFailed") },
+    { key: "certificate", label: t("filterCertificates") },
+    { key: "admin_action", label: t("filterAdminLabel") },
   ];
 
   return (
@@ -141,11 +123,11 @@ export function ActivityClient({ initialFeed }: Props) {
         <CardContent className="divide-y p-0">
           {filteredEvents.length === 0 ? (
             <div className="px-4 py-12 text-center text-sm text-muted-foreground">
-              No events
+              {t("noEvents")}
             </div>
           ) : (
             filteredEvents.map((event, i) => {
-              const config = eventConfig[event.type] || eventConfig.enrollment;
+              const config = eventIcons[event.type] || eventIcons.enrollment;
               return (
                 <div
                   key={`${event.timestamp}-${i}`}
@@ -165,7 +147,7 @@ export function ActivityClient({ initialFeed }: Props) {
                         {event.userName}
                       </Link>
                       <Badge variant="outline" className="text-xs">
-                        {config.label}
+                        {eventLabels[event.type] || event.type}
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground truncate">
@@ -191,10 +173,10 @@ export function ActivityClient({ initialFeed }: Props) {
             disabled={feed.page <= 1 || isPending}
             onClick={() => loadPage(feed.page - 1)}
           >
-            Previous
+            {t("previous")}
           </Button>
           <span className="text-sm text-muted-foreground">
-            Page {feed.page} of {feed.totalPages}
+            {t("pageOf", { page: feed.page, total: feed.totalPages })}
           </span>
           <Button
             variant="outline"
@@ -202,7 +184,7 @@ export function ActivityClient({ initialFeed }: Props) {
             disabled={feed.page >= feed.totalPages || isPending}
             onClick={() => loadPage(feed.page + 1)}
           >
-            Next
+            {t("nextPage")}
           </Button>
         </div>
       )}

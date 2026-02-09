@@ -65,7 +65,7 @@ export default async function QuizzesPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">{t("quizzes")}</h1>
           <p className="mt-1 text-muted-foreground">
-            {quizzesData.length} quizzes total
+            {t("quizzesTotal", { count: quizzesData.length })}
           </p>
         </div>
 

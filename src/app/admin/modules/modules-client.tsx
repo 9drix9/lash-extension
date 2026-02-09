@@ -81,17 +81,17 @@ export function ModulesClient({ modules }: ModulesClientProps) {
           <CardHeader>
             <div className="flex items-center justify-between">
               <Badge variant={mod.isBonus ? "secondary" : "default"}>
-                {mod.isBonus ? "Bonus" : `#${mod.order}`}
+                {mod.isBonus ? t("bonusLabel") : `#${mod.order}`}
               </Badge>
               <div className="flex gap-1.5">
-                <Badge variant="outline">{mod.lessonCount} lessons</Badge>
-                {mod.hasQuiz && <Badge variant="outline">Quiz</Badge>}
+                <Badge variant="outline">{t("lessonCount", { count: mod.lessonCount })}</Badge>
+                {mod.hasQuiz && <Badge variant="outline">{t("quizHeader")}</Badge>}
               </div>
             </div>
             <CardTitle className="mt-2 text-lg">{mod.titleEn}</CardTitle>
             {mod.titleEs && (
               <CardDescription className="text-xs">
-                ES: {mod.titleEs}
+                {t("esLabel")}: {mod.titleEs}
               </CardDescription>
             )}
           </CardHeader>
@@ -118,7 +118,7 @@ export function ModulesClient({ modules }: ModulesClientProps) {
                 <DialogHeader>
                   <DialogTitle>{t("editModule")}</DialogTitle>
                   <DialogDescription>
-                    Module #{mod.order}: {mod.titleEn}
+                    {t("moduleLabel", { order: mod.order, name: mod.titleEn })}
                   </DialogDescription>
                 </DialogHeader>
                 <form
@@ -130,7 +130,7 @@ export function ModulesClient({ modules }: ModulesClientProps) {
                 >
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor={`titleEn-${mod.id}`}>Title (EN)</Label>
+                      <Label htmlFor={`titleEn-${mod.id}`}>{t("titleEn")}</Label>
                       <Input
                         id={`titleEn-${mod.id}`}
                         name="titleEn"
@@ -139,7 +139,7 @@ export function ModulesClient({ modules }: ModulesClientProps) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor={`titleEs-${mod.id}`}>Title (ES)</Label>
+                      <Label htmlFor={`titleEs-${mod.id}`}>{t("titleEs")}</Label>
                       <Input
                         id={`titleEs-${mod.id}`}
                         name="titleEs"
@@ -151,7 +151,7 @@ export function ModulesClient({ modules }: ModulesClientProps) {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor={`subtitleEn-${mod.id}`}>
-                        Subtitle (EN)
+                        {t("subtitleEn")}
                       </Label>
                       <Input
                         id={`subtitleEn-${mod.id}`}
@@ -161,7 +161,7 @@ export function ModulesClient({ modules }: ModulesClientProps) {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor={`subtitleEs-${mod.id}`}>
-                        Subtitle (ES)
+                        {t("subtitleEs")}
                       </Label>
                       <Input
                         id={`subtitleEs-${mod.id}`}
@@ -173,7 +173,7 @@ export function ModulesClient({ modules }: ModulesClientProps) {
 
                   <div className="space-y-2">
                     <Label htmlFor={`descEn-${mod.id}`}>
-                      Description (EN)
+                      {t("descriptionEn")}
                     </Label>
                     <textarea
                       id={`descEn-${mod.id}`}
@@ -186,7 +186,7 @@ export function ModulesClient({ modules }: ModulesClientProps) {
 
                   <div className="space-y-2">
                     <Label htmlFor={`descEs-${mod.id}`}>
-                      Description (ES)
+                      {t("descriptionEs")}
                     </Label>
                     <textarea
                       id={`descEs-${mod.id}`}
@@ -198,7 +198,7 @@ export function ModulesClient({ modules }: ModulesClientProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor={`imageUrl-${mod.id}`}>Image URL</Label>
+                    <Label htmlFor={`imageUrl-${mod.id}`}>{t("imageUrlLabel")}</Label>
                     <Input
                       id={`imageUrl-${mod.id}`}
                       name="imageUrl"

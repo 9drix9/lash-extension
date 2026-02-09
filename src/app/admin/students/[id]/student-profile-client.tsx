@@ -331,7 +331,7 @@ export function StudentProfileClient({
           <CardContent className="pt-6">
             {timeline.length === 0 ? (
               <p className="text-center text-sm text-muted-foreground py-8">
-                No activity yet
+                {t("noActivityYet")}
               </p>
             ) : (
               <div className="space-y-1">
@@ -378,7 +378,7 @@ export function StudentProfileClient({
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                      Quiz
+                      {t("quizHeader")}
                     </th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
                       {t("attempt")}
@@ -401,7 +401,7 @@ export function StudentProfileClient({
                         colSpan={5}
                         className="px-4 py-8 text-center text-sm text-muted-foreground"
                       >
-                        No quiz attempts
+                        {t("noQuizAttempts")}
                       </td>
                     </tr>
                   )}
@@ -467,7 +467,7 @@ export function StudentProfileClient({
             {/* Notes list */}
             {notes.length === 0 ? (
               <p className="text-center text-sm text-muted-foreground py-4">
-                No notes yet
+                {t("noNotesYet")}
               </p>
             ) : (
               <div className="space-y-3">
@@ -514,7 +514,7 @@ export function StudentProfileClient({
             <CardContent className="space-y-2">
               {uniqueQuizIds.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  No quiz attempts to reset
+                  {t("noQuizToReset")}
                 </p>
               ) : (
                 uniqueQuizIds.map((quizId) => {
@@ -586,7 +586,7 @@ export function StudentProfileClient({
               {profile.moduleProgress.filter((m) => m.status === "LOCKED")
                 .length === 0 && (
                 <p className="text-sm text-muted-foreground">
-                  All modules unlocked
+                  {t("allModulesUnlocked")}
                 </p>
               )}
             </CardContent>

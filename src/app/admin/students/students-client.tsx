@@ -286,7 +286,7 @@ export function StudentsClient({ students }: StudentsClientProps) {
                           </DialogDescription>
                         </DialogHeader>
                         <p className="text-sm text-muted-foreground">
-                          Student: <strong>{student.name}</strong> (
+                          {t("studentLabel")}: <strong>{student.name}</strong> (
                           {student.email})
                         </p>
                         <DialogFooter>

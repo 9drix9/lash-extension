@@ -135,8 +135,8 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
       {/* Create Session Form */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">{t("create")} Live Session</CardTitle>
-          <CardDescription>Schedule a new live Q&A session</CardDescription>
+          <CardTitle className="text-lg">{t("createLiveSession")}</CardTitle>
+          <CardDescription>{t("scheduleLiveDesc")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form
@@ -148,18 +148,18 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="titleEn">Title (EN) *</Label>
+                <Label htmlFor="titleEn">{t("titleEn")} *</Label>
                 <Input id="titleEn" name="titleEn" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="titleEs">Title (ES)</Label>
+                <Label htmlFor="titleEs">{t("titleEs")}</Label>
                 <Input id="titleEs" name="titleEs" />
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="descEn">Description (EN)</Label>
+                <Label htmlFor="descEn">{t("descriptionEn")}</Label>
                 <textarea
                   id="descEn"
                   name="descEn"
@@ -168,7 +168,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="descEs">Description (ES)</Label>
+                <Label htmlFor="descEs">{t("descriptionEs")}</Label>
                 <textarea
                   id="descEs"
                   name="descEs"
@@ -180,15 +180,15 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="space-y-2">
-                <Label htmlFor="date">Date *</Label>
+                <Label htmlFor="date">{t("dateLabel")} *</Label>
                 <Input id="date" name="date" type="date" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="time">Time *</Label>
+                <Label htmlFor="time">{t("timeLabel")} *</Label>
                 <Input id="time" name="time" type="time" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="durationMin">Duration (min)</Label>
+                <Label htmlFor="durationMin">{t("durationMinLabel")}</Label>
                 <Input
                   id="durationMin"
                   name="durationMin"
@@ -201,7 +201,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="joinUrl">Join URL *</Label>
+              <Label htmlFor="joinUrl">{t("joinUrlLabel")} *</Label>
               <Input
                 id="joinUrl"
                 name="joinUrl"
@@ -226,7 +226,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
                 <CardTitle className="text-lg">{session.titleEn}</CardTitle>
                 {session.titleEs && (
                   <CardDescription className="text-xs">
-                    ES: {session.titleEs}
+                    {t("esLabel")}: {session.titleEs}
                   </CardDescription>
                 )}
               </div>
@@ -234,12 +234,12 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
                 <Badge
                   variant={isUpcoming(session.scheduledAt) ? "default" : "secondary"}
                 >
-                  {isUpcoming(session.scheduledAt) ? "Upcoming" : "Past"}
+                  {isUpcoming(session.scheduledAt) ? t("upcomingLabel") : t("pastLabel")}
                 </Badge>
                 <Badge variant="outline">
-                  {session.rsvpCount} RSVPs
+                  {t("rsvpsCount", { count: session.rsvpCount })}
                 </Badge>
-                <Badge variant="outline">{session.durationMin} min</Badge>
+                <Badge variant="outline">{t("durationDisplay", { count: session.durationMin })}</Badge>
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -253,7 +253,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
 
             {session.joinUrl && (
               <p className="text-sm">
-                <span className="font-medium">Join:</span>{" "}
+                <span className="font-medium">{t("joinPrefix")}</span>{" "}
                 <a
                   href={session.joinUrl}
                   target="_blank"
@@ -267,7 +267,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
 
             {session.replayUrl && (
               <p className="text-sm">
-                <span className="font-medium">Replay:</span>{" "}
+                <span className="font-medium">{t("replayPrefix")}</span>{" "}
                 <a
                   href={session.replayUrl}
                   target="_blank"
@@ -289,7 +289,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
                   }}
                   className="space-y-3"
                 >
-                  <Label className="text-xs font-medium">Add Replay URL</Label>
+                  <Label className="text-xs font-medium">{t("addReplayUrl")}</Label>
                   <div className="flex gap-2">
                     <Input
                       name="replayUrl"
@@ -303,7 +303,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
                   </div>
                   <Input
                     name="notes"
-                    placeholder="Session notes (optional)"
+                    placeholder={t("sessionNotesPlaceholder")}
                     className="h-8"
                   />
                 </form>
@@ -314,7 +314,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
             {session.questions.length > 0 && (
               <div className="space-y-2">
                 <h4 className="text-sm font-medium">
-                  Questions ({session.questions.length})
+                  {t("questionsHeader", { count: session.questions.length })}
                 </h4>
                 <div className="space-y-2">
                   {session.questions.map((q) => (
@@ -337,11 +337,11 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
                             }
                             className="text-xs"
                           >
-                            {q.status.toLowerCase()}
+                            {q.status === "ANSWERED" ? t("answeredLabel") : q.status === "PINNED" ? t("pinLabel") : t("pending")}
                           </Badge>
                           {q.upvotes > 0 && (
                             <span className="text-xs text-muted-foreground">
-                              {q.upvotes} upvotes
+                              {t("upvotesCount", { count: q.upvotes })}
                             </span>
                           )}
                         </div>
@@ -358,7 +358,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
                               handleQuestionStatus(q.id, "ANSWERED")
                             }
                           >
-                            Answered
+                            {t("answeredLabel")}
                           </Button>
                         )}
                         {q.status !== "PINNED" && (
@@ -371,7 +371,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
                               handleQuestionStatus(q.id, "PINNED")
                             }
                           >
-                            Pin
+                            {t("pinLabel")}
                           </Button>
                         )}
                         {q.status !== "PENDING" && (
@@ -384,7 +384,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
                               handleQuestionStatus(q.id, "PENDING")
                             }
                           >
-                            Reset
+                            {t("resetLabel")}
                           </Button>
                         )}
                       </div>
@@ -400,7 +400,7 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
       {sessions.length === 0 && (
         <Card>
           <CardContent className="py-8 text-center text-sm text-muted-foreground">
-            No live sessions yet. Create one above.
+            {t("noLiveSessions")}
           </CardContent>
         </Card>
       )}

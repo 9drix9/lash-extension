@@ -80,7 +80,7 @@ export function AdminClient({ stats, alerts }: AdminClientProps) {
           label={t("totalEnrolled")}
           value={stats.enrolledStudents}
           icon={<Users className="h-4 w-4 text-blue-600" />}
-          sub={`${stats.totalStudents} total`}
+          sub={t("totalLabel", { count: stats.totalStudents })}
         />
         <StatCard
           label={t("revenue")}
@@ -140,7 +140,7 @@ export function AdminClient({ stats, alerts }: AdminClientProps) {
                   id: u.id,
                   label: u.name,
                   sub: u.lastActivityAt
-                    ? daysSince(u.lastActivityAt) + "d ago"
+                    ? t("daysAgo", { count: daysSince(u.lastActivityAt) })
                     : t("neverActive"),
                 }))}
               />
@@ -152,7 +152,7 @@ export function AdminClient({ stats, alerts }: AdminClientProps) {
                 items={alerts.quizStruggle.map((u) => ({
                   id: u.id,
                   label: u.name,
-                  sub: "3+ failed attempts",
+                  sub: t("failedAttempts", { count: "3+" }),
                 }))}
               />
             )}

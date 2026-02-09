@@ -68,7 +68,7 @@ export function AuditClient({ initialLog }: Props) {
             <Shield className="h-5 w-5" />
             {t("auditLog")}
             <Badge variant="outline" className="ml-auto">
-              {log.total} total
+              {t("totalLabel", { count: log.total })}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -157,10 +157,10 @@ export function AuditClient({ initialLog }: Props) {
             disabled={log.page <= 1 || isPending}
             onClick={() => loadPage(log.page - 1)}
           >
-            Previous
+            {t("previous")}
           </Button>
           <span className="text-sm text-muted-foreground">
-            Page {log.page} of {log.totalPages}
+            {t("pageOf", { page: log.page, total: log.totalPages })}
           </span>
           <Button
             variant="outline"
@@ -168,7 +168,7 @@ export function AuditClient({ initialLog }: Props) {
             disabled={log.page >= log.totalPages || isPending}
             onClick={() => loadPage(log.page + 1)}
           >
-            Next
+            {t("nextPage")}
           </Button>
         </div>
       )}

@@ -53,7 +53,7 @@ export default async function ModulesPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight">{t("modules")}</h1>
           <p className="mt-1 text-muted-foreground">
-            {modulesData.length} modules total
+            {t("modulesTotal", { count: modulesData.length })}
           </p>
         </div>
 

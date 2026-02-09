@@ -69,7 +69,7 @@ export default async function AffiliatesPage() {
             {t("affiliates")}
           </h1>
           <p className="mt-1 text-muted-foreground">
-            {affiliatesData.length} affiliates total
+            {t("affiliatesRegistered", { count: affiliatesData.length })}
           </p>
         </div>
 

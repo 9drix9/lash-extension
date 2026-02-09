@@ -90,7 +90,7 @@ export function AnalyticsClient({ moduleData, quizData }: Props) {
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
-                      Module
+                      {t("moduleHeader")}
                     </th>
                     <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
                       {t("started")}
@@ -120,7 +120,7 @@ export function AnalyticsClient({ moduleData, quizData }: Props) {
                           M{m.order}: {m.titleEn}
                         </span>
                         <span className="ml-2 text-xs text-muted-foreground">
-                          ({m.totalLessons} lessons)
+                          {t("lessonsInModule", { count: m.totalLessons })}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center text-sm">
@@ -153,7 +153,7 @@ export function AnalyticsClient({ moduleData, quizData }: Props) {
                         )}
                       </td>
                       <td className="px-4 py-3 text-center text-sm">
-                        {m.avgDays > 0 ? `${m.avgDays}d` : "--"}
+                        {m.avgDays > 0 ? t("daysShort", { count: m.avgDays }) : "--"}
                       </td>
                       <td className="px-4 py-3 text-center text-sm">
                         {m.stuckCount > 0 ? (
@@ -234,7 +234,7 @@ export function AnalyticsClient({ moduleData, quizData }: Props) {
                         </div>
                         <div className="flex items-center gap-4 flex-shrink-0">
                           <span className="text-xs text-muted-foreground">
-                            {qs.totalAnswered} answers
+                            {t("answersCount", { count: qs.totalAnswered })}
                           </span>
                           <div className="flex items-center gap-2 w-32">
                             <div className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">

@@ -113,9 +113,9 @@ export function QuizzesClient({
       {/* Global Passing Score */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Global Passing Score</CardTitle>
+          <CardTitle className="text-lg">{t("globalPassingScore")}</CardTitle>
           <CardDescription>
-            Default passing score applied to all quizzes unless overridden
+            {t("globalPassingScoreDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -191,16 +191,16 @@ function QuizCard({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-lg">
-              Module {quiz.moduleOrder}: {quiz.moduleName}
+              {t("moduleLabel", { order: quiz.moduleOrder, name: quiz.moduleName })}
             </CardTitle>
             <CardDescription>
-              {quiz.titleEn} -- {quiz.questions.length} questions
+              {quiz.titleEn} -- {t("questionsCount", { count: quiz.questions.length })}
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant={quiz.passingScore ? "default" : "outline"}>
-              Pass: {quiz.passingScore ?? globalPassingScore}%
-              {!quiz.passingScore && " (global)"}
+              {t("passScoreLabel", { score: quiz.passingScore ?? globalPassingScore })}
+              {!quiz.passingScore && t("globalSuffix")}
             </Badge>
           </div>
         </div>
@@ -210,7 +210,7 @@ function QuizCard({
         <div className="mb-4 flex items-end gap-3 rounded-lg bg-muted/50 p-3">
           <div className="space-y-1.5">
             <Label htmlFor={`score-${quiz.id}`} className="text-xs">
-              Override Passing Score (leave empty for global)
+              {t("overridePassingScore")}
             </Label>
             <Input
               id={`score-${quiz.id}`}
@@ -241,7 +241,7 @@ function QuizCard({
           className="mb-2 w-full justify-between"
         >
           <span>
-            {isExpanded ? "Hide" : "Show"} Questions ({quiz.questions.length})
+            {isExpanded ? t("hideQuestions", { count: quiz.questions.length }) : t("showQuestions", { count: quiz.questions.length })}
           </span>
           <span>{isExpanded ? "\u25B2" : "\u25BC"}</span>
         </Button>
@@ -281,6 +281,7 @@ function QuestionItem({
   onDelete: (id: string) => void;
   quizId: string;
 }) {
+  const t = useTranslations("admin");
   const tc = useTranslations("common");
   const [isEditPending, startEditTransition] = useTransition();
 
@@ -352,9 +353,9 @@ function QuestionItem({
             </DialogTrigger>
             <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-xl">
               <DialogHeader>
-                <DialogTitle>Edit Question {index + 1}</DialogTitle>
+                <DialogTitle>{t("editQuestionN", { number: index + 1 })}</DialogTitle>
                 <DialogDescription>
-                  {question.type} question
+                  {t("questionTypeLabel", { type: question.type })}
                 </DialogDescription>
               </DialogHeader>
               <EditQuestionForm
@@ -372,10 +373,9 @@ function QuestionItem({
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Delete Question</DialogTitle>
+                <DialogTitle>{t("deleteQuestion")}</DialogTitle>
                 <DialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  question.
+                  {t("deleteQuestionConfirm")}
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -409,6 +409,7 @@ function EditQuestionForm({
   isPending: boolean;
   onSubmit: (formData: FormData) => void;
 }) {
+  const t = useTranslations("admin");
   const tc = useTranslations("common");
   const [options, setOptions] = useState(question.options);
   const [correctId, setCorrectId] = useState(question.correctOptionId);
@@ -440,7 +441,7 @@ function EditQuestionForm({
       <input type="hidden" name="correctOptionId" value={correctId} />
 
       <div className="space-y-2">
-        <Label>Question (EN)</Label>
+        <Label>{t("questionEn")}</Label>
         <textarea
           name="questionEn"
           defaultValue={question.questionEn}
@@ -451,7 +452,7 @@ function EditQuestionForm({
       </div>
 
       <div className="space-y-2">
-        <Label>Question (ES)</Label>
+        <Label>{t("questionEs")}</Label>
         <textarea
           name="questionEs"
           defaultValue={question.questionEs}
@@ -463,7 +464,7 @@ function EditQuestionForm({
       {question.type === "SCENARIO" && (
         <>
           <div className="space-y-2">
-            <Label>Scenario (EN)</Label>
+            <Label>{t("scenarioEn")}</Label>
             <textarea
               name="scenarioEn"
               defaultValue={question.scenarioEn || ""}
@@ -472,7 +473,7 @@ function EditQuestionForm({
             />
           </div>
           <div className="space-y-2">
-            <Label>Scenario (ES)</Label>
+            <Label>{t("scenarioEs")}</Label>
             <textarea
               name="scenarioEs"
               defaultValue={question.scenarioEs || ""}
@@ -485,9 +486,9 @@ function EditQuestionForm({
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label>Options</Label>
+          <Label>{t("optionsLabel")}</Label>
           <Button type="button" variant="outline" size="sm" onClick={addOption}>
-            + Add Option
+            {t("addOption")}
           </Button>
         </div>
         {options.map((opt, idx) => (
@@ -510,7 +511,7 @@ function EditQuestionForm({
                   }`}
                 />
                 <span className="text-xs text-muted-foreground">
-                  {opt.id === correctId ? "Correct" : "Mark correct"}
+                  {opt.id === correctId ? t("correctLabel") : t("markCorrect")}
                 </span>
               </div>
               {options.length > 2 && (
@@ -521,7 +522,7 @@ function EditQuestionForm({
                   className="h-6 text-xs text-destructive"
                   onClick={() => removeOption(idx)}
                 >
-                  Remove
+                  {t("removeLabel")}
                 </Button>
               )}
             </div>
@@ -529,13 +530,13 @@ function EditQuestionForm({
               <Input
                 name={`option-en-${idx}`}
                 defaultValue={opt.textEn}
-                placeholder="Option text (EN)"
+                placeholder={t("optionTextEn")}
                 required
               />
               <Input
                 name={`option-es-${idx}`}
                 defaultValue={opt.textEs}
-                placeholder="Option text (ES)"
+                placeholder={t("optionTextEs")}
               />
             </div>
           </div>
@@ -544,7 +545,7 @@ function EditQuestionForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label>Explanation (EN)</Label>
+          <Label>{t("explanationEn")}</Label>
           <textarea
             name="explanationEn"
             defaultValue={question.explanationEn}
@@ -553,7 +554,7 @@ function EditQuestionForm({
           />
         </div>
         <div className="space-y-2">
-          <Label>Explanation (ES)</Label>
+          <Label>{t("explanationEs")}</Label>
           <textarea
             name="explanationEs"
             defaultValue={question.explanationEs}
@@ -643,7 +644,7 @@ function AddQuestionDialog({
         <DialogHeader>
           <DialogTitle>{t("addQuestion")}</DialogTitle>
           <DialogDescription>
-            Add a new question to this quiz
+            {t("addQuestionDesc")}
           </DialogDescription>
         </DialogHeader>
         <form
@@ -657,7 +658,7 @@ function AddQuestionDialog({
           <input type="hidden" name="correctOptionId" value={correctId} />
 
           <div className="space-y-2">
-            <Label>Type</Label>
+            <Label>{t("typeLabel")}</Label>
             <div className="flex gap-2">
               <Button
                 type="button"
@@ -665,7 +666,7 @@ function AddQuestionDialog({
                 size="sm"
                 onClick={() => setType("MCQ")}
               >
-                MCQ
+                {t("mcqLabel")}
               </Button>
               <Button
                 type="button"
@@ -673,13 +674,13 @@ function AddQuestionDialog({
                 size="sm"
                 onClick={() => setType("SCENARIO")}
               >
-                Scenario
+                {t("scenarioLabel")}
               </Button>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Question (EN) *</Label>
+            <Label>{t("questionEnRequired")}</Label>
             <textarea
               name="questionEn"
               required
@@ -689,7 +690,7 @@ function AddQuestionDialog({
           </div>
 
           <div className="space-y-2">
-            <Label>Question (ES)</Label>
+            <Label>{t("questionEs")}</Label>
             <textarea
               name="questionEs"
               rows={2}
@@ -700,7 +701,7 @@ function AddQuestionDialog({
           {type === "SCENARIO" && (
             <>
               <div className="space-y-2">
-                <Label>Scenario (EN)</Label>
+                <Label>{t("scenarioEn")}</Label>
                 <textarea
                   name="scenarioEn"
                   rows={2}
@@ -708,7 +709,7 @@ function AddQuestionDialog({
                 />
               </div>
               <div className="space-y-2">
-                <Label>Scenario (ES)</Label>
+                <Label>{t("scenarioEs")}</Label>
                 <textarea
                   name="scenarioEs"
                   rows={2}
@@ -720,14 +721,14 @@ function AddQuestionDialog({
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label>Options</Label>
+              <Label>{t("optionsLabel")}</Label>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={addOption}
               >
-                + Add Option
+                {t("addOption")}
               </Button>
             </div>
             {options.map((opt, idx) => (
@@ -755,18 +756,18 @@ function AddQuestionDialog({
                     }`}
                   />
                   <span className="text-xs text-muted-foreground">
-                    {opt.id === correctId ? "Correct" : "Mark correct"}
+                    {opt.id === correctId ? t("correctLabel") : t("markCorrect")}
                   </span>
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   <Input
                     name={`option-en-${idx}`}
-                    placeholder="Option text (EN)"
+                    placeholder={t("optionTextEn")}
                     required
                   />
                   <Input
                     name={`option-es-${idx}`}
-                    placeholder="Option text (ES)"
+                    placeholder={t("optionTextEs")}
                   />
                 </div>
               </div>
@@ -775,7 +776,7 @@ function AddQuestionDialog({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>Explanation (EN)</Label>
+              <Label>{t("explanationEn")}</Label>
               <textarea
                 name="explanationEn"
                 rows={2}
@@ -783,7 +784,7 @@ function AddQuestionDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label>Explanation (ES)</Label>
+              <Label>{t("explanationEs")}</Label>
               <textarea
                 name="explanationEs"
                 rows={2}
