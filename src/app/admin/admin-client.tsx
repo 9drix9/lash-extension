@@ -17,6 +17,7 @@ import {
   TrendingUp,
   Clock,
   ChevronRight,
+  CreditCard,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -58,6 +59,7 @@ export function AdminClient({ stats, alerts }: AdminClientProps) {
     { href: "/admin/quizzes", label: t("quizzes"), description: t("quizzesDesc"), icon: HelpCircle },
     { href: "/admin/live-sessions", label: t("liveSessions"), description: t("liveSessionsDesc"), icon: Video },
     { href: "/admin/affiliates", label: t("affiliates"), description: t("affiliatesDesc"), icon: UserCheck },
+    { href: "/admin/transactions", label: t("transactions"), description: t("transactionsDesc"), icon: CreditCard },
     { href: "/admin/analytics", label: t("analytics"), description: t("analyticsDesc"), icon: BarChart3 },
     { href: "/admin/activity", label: t("activityFeed"), description: t("activityDesc"), icon: Activity },
     { href: "/admin/certificates", label: t("certificates"), description: t("certificatesDesc"), icon: Award },
