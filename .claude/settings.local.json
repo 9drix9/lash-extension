@@ -14,7 +14,8 @@
       "Bash(npx prisma generate:*)",
       "Bash(npx dotenv:*)",
       "Bash(cd C:\\\\Users\\\\ughty\\\\OneDrive\\\\Desktop\\\\lash-extension:*)",
-      "Bash(echo Exit code: $?:*)"
+      "Bash(echo Exit code: $?:*)",
+      "Bash(cd:*)"
     ]
   }
 }
