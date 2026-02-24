@@ -47,7 +47,7 @@ export function CertificateProgress({
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center gap-2">
-          <Award className="h-5 w-5 text-gold" />
+          <Award className="h-5 w-5 text-primary" />
           {t("certificationProgress")}
         </CardTitle>
       </CardHeader>
@@ -71,7 +71,7 @@ export function CertificateProgress({
               cy="50"
               r={radius}
               fill="none"
-              stroke="hsl(36 40% 61%)"
+              stroke="hsl(var(--primary))"
               strokeWidth="8"
               strokeLinecap="round"
               strokeDasharray={circumference}
