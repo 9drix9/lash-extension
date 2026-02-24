@@ -87,7 +87,7 @@ export default async function EnrollPage() {
       {/* Background accents */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-gold/5 blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 h-80 w-80 rounded-full bg-rose/5 blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 h-80 w-80 rounded-full bg-gold/5 blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-4xl space-y-8">
@@ -205,9 +205,9 @@ export default async function EnrollPage() {
 
           {/* Payment Plan */}
           <Card className="relative flex flex-col overflow-hidden border-border/50 shadow-xl shadow-black/5">
-            <div className="h-1.5 w-full bg-gradient-to-r from-rose via-rose/70 to-rose" />
+            <div className="h-1.5 w-full bg-gradient-to-r from-gold via-gold/70 to-gold" />
             <CardHeader className="text-center space-y-2">
-              <Badge className="mx-auto bg-rose/10 text-rose hover:bg-rose/10 px-3">
+              <Badge className="mx-auto bg-gold/10 text-gold hover:bg-gold/10 px-3">
                 {tPayment("paymentPlan")}
               </Badge>
               <CardTitle className="font-display text-xl">
