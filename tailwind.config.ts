@@ -44,9 +44,9 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
         gold: {
-          DEFAULT: "#C9A96E",
-          light: "#E8D5A8",
-          dark: "#A07D3F",
+          DEFAULT: "#7eb27d",
+          light: "#a8cda7",
+          dark: "#5a8f59",
         },
         rose: {
           DEFAULT: "#D4A0A0",

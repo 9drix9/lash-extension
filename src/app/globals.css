@@ -10,7 +10,7 @@
     --card-foreground: 0 0% 7%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 7%;
-    --primary: 36 40% 61%;
+    --primary: 119 26% 59%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 15%;
@@ -22,7 +22,7 @@
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 36 40% 61%;
+    --ring: 119 26% 59%;
     --radius: 0.75rem;
   }
 }
@@ -62,7 +62,7 @@
 
 /* Gold gradient text */
 .text-gold-gradient {
-  background: linear-gradient(135deg, #C9A96E 0%, #E8D5A8 50%, #C9A96E 100%);
+  background: linear-gradient(135deg, #7eb27d 0%, #a8cda7 50%, #7eb27d 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -78,12 +78,12 @@ html {
   transition: all 0.15s ease;
 }
 .quiz-option:hover {
-  border-color: hsl(36 40% 61%);
-  background-color: hsl(36 40% 61% / 0.05);
+  border-color: hsl(119 26% 59%);
+  background-color: hsl(119 26% 59% / 0.05);
 }
 .quiz-option.selected {
-  border-color: hsl(36 40% 61%);
-  background-color: hsl(36 40% 61% / 0.1);
+  border-color: hsl(119 26% 59%);
+  background-color: hsl(119 26% 59% / 0.1);
 }
 
 /* Progress bar animation */
@@ -119,8 +119,8 @@ html {
 
 /* Roadmap timeline pulse animation */
 @keyframes pulse-gold {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 110, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(201, 169, 110, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(126, 178, 125, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(126, 178, 125, 0); }
 }
 .roadmap-current {
   animation: pulse-gold 2s ease-in-out infinite;
