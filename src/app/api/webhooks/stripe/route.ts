@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { initializeModuleProgress } from "@/lib/actions/progress";
+import { sendEnrollmentConfirmation, sendPaymentReceipt } from "@/lib/email";
 import Stripe from "stripe";
 
 export async function POST(req: NextRequest) {
@@ -69,8 +70,18 @@ export async function POST(req: NextRequest) {
       });
       await initializeModuleProgress(userId, courseId, tier);
 
-      // Track affiliate conversion
+      // Send enrollment confirmation + receipt emails
       const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (user?.email) {
+        const firstName = user.name?.split(" ")[0] ?? "Student";
+        const validTier = (["BASIC", "STANDARD", "PREMIUM"].includes(tier) ? tier : "BASIC") as "BASIC" | "STANDARD" | "PREMIUM";
+        await Promise.allSettled([
+          sendEnrollmentConfirmation({ to: user.email, name: firstName, tier: validTier }),
+          sendPaymentReceipt({ to: user.email, name: firstName, tier: validTier, amountPaid: payment.amountTotal }),
+        ]);
+      }
+
+      // Track affiliate conversion
       if (user?.referralCode) {
         const affiliate = await prisma.affiliate.findUnique({
           where: { code: user.referralCode, status: "APPROVED" },
