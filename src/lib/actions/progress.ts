@@ -129,7 +129,8 @@ export async function getStudentProgress(courseId: string) {
 
 export async function initializeModuleProgress(
   userId: string,
-  courseId: string
+  courseId: string,
+  tier: string = "BASIC"
 ) {
   const modules = await prisma.module.findMany({
     where: { courseId },
@@ -138,7 +139,18 @@ export async function initializeModuleProgress(
 
   for (let i = 0; i < modules.length; i++) {
     const mod = modules[i];
-    const status = i === 0 ? "UNLOCKED" : mod.isBonus ? "UNLOCKED" : "LOCKED";
+
+    let status: string;
+    if (mod.isPremiumOnly) {
+      // Premium-only modules: unlocked for PREMIUM tier, locked for everyone else
+      status = tier === "PREMIUM" ? "UNLOCKED" : "LOCKED";
+    } else if (i === 0) {
+      status = "UNLOCKED";
+    } else if (mod.isBonus) {
+      status = "UNLOCKED";
+    } else {
+      status = "LOCKED";
+    }
 
     await prisma.moduleProgress.upsert({
       where: {

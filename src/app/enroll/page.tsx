@@ -16,17 +16,21 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
-  BookOpen,
-  ClipboardCheck,
-  Award,
-  Globe,
-  Video,
   CheckCircle2,
+  XCircle,
   Sparkles,
+  Crown,
+  Video,
+  BookOpen,
+  Award,
+  Users,
+  BookMarked,
+  Star,
+  MessageSquare,
+  Palette,
+  Share2,
 } from "lucide-react";
 import { CheckoutButton } from "./enroll-button";
-
-const INSTALLMENT_COUNT = 3;
 
 export default async function EnrollPage() {
   const t = await getTranslations("common");
@@ -38,7 +42,6 @@ export default async function EnrollPage() {
 
   const course = await getActiveCourse();
 
-  // If the user is signed in, check whether they already have an active payment
   if (session?.user && course) {
     const paid = await hasActivePayment(session.user.id, course.id);
     if (paid) {
@@ -54,60 +57,69 @@ export default async function EnrollPage() {
             <CardTitle className="font-display text-2xl">
               {tLanding("noCourseAvailable")}
             </CardTitle>
-            <CardDescription>
-              {tLanding("noCourseDesc")}
-            </CardDescription>
+            <CardDescription>{tLanding("noCourseDesc")}</CardDescription>
           </CardHeader>
         </Card>
       </div>
     );
   }
 
-  const totalPrice = course.price; // in cents
-  const installmentTotal = totalPrice + 8000; // $80 surcharge in cents
-  const monthlyPrice = Math.ceil(installmentTotal / INSTALLMENT_COUNT);
-  const savings = (installmentTotal - totalPrice) / 100; // savings in dollars
-  const moduleCount = course.modules.length;
-  const lessonCount = course.modules.reduce(
-    (acc, mod) => acc + mod.lessons.length,
-    0
-  );
-  const quizCount = course.modules.filter((mod) => mod.quiz).length;
+  // Tier feature lists
+  const basicFeatures = [
+    { icon: Video,      label: tPayment("tierSelfPaced"),       included: true },
+    { icon: BookOpen,   label: tPayment("tierLessonsQuizzes"),   included: true },
+    { icon: Award,      label: tPayment("tierLifetimeAccess"),   included: true },
+    { icon: Users,      label: tPayment("tierLiveSeminars"),     included: false },
+    { icon: MessageSquare, label: tPayment("tierCoaching"),      included: false },
+  ];
 
-  const features = [
-    { icon: BookOpen, label: tLanding("modulesCount", { count: moduleCount }) },
-    { icon: ClipboardCheck, label: tLanding("quizzesCount", { count: quizCount }) },
-    { icon: Award, label: tLanding("certificate") },
-    { icon: Globe, label: tLanding("bilingual") },
-    { icon: Video, label: tLanding("liveSupport") },
+  const standardFeatures = [
+    { icon: Video,      label: tPayment("tierSelfPaced"),        included: true },
+    { icon: BookOpen,   label: tPayment("tierLessonsQuizzes"),   included: true },
+    { icon: Award,      label: tPayment("tierLifetimeAccess"),   included: true },
+    { icon: Users,      label: tPayment("tierLiveSeminars"),     included: true },
+    { icon: BookMarked, label: tPayment("tierMappingEbook"),     included: true },
+    { icon: MessageSquare, label: tPayment("tierCoaching"),      included: false },
+  ];
+
+  const premiumFeatures = [
+    { icon: Video,      label: tPayment("tierSelfPaced"),          included: true },
+    { icon: BookOpen,   label: tPayment("tierLessonsQuizzes"),     included: true },
+    { icon: Award,      label: tPayment("tierLifetimeAccess"),     included: true },
+    { icon: Users,      label: tPayment("tierLiveSeminars"),       included: true },
+    { icon: BookMarked, label: tPayment("tierMappingEbook"),       included: true },
+    { icon: Star,       label: tPayment("tierPersonalizedFeedback"), included: true },
+    { icon: MessageSquare, label: tPayment("tierCoaching"),        included: true },
+    { icon: Palette,    label: tPayment("tierBonusTemplates"),     included: true },
+    { icon: Share2,     label: tPayment("tierMarketingToolkit"),   included: true },
   ];
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
       {/* Background accents */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-gold/5 blur-3xl" />
+        <div className="absolute -left-40 -top-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute -bottom-40 -right-40 h-80 w-80 rounded-full bg-gold/5 blur-3xl" />
       </div>
 
-      <div className="relative w-full max-w-4xl space-y-8">
+      <div className="relative w-full max-w-6xl space-y-10">
         {/* Header */}
         <div className="text-center space-y-4">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold/10">
-            <Sparkles className="h-7 w-7 text-gold" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+            <Sparkles className="h-7 w-7 text-primary" />
           </div>
           <h1 className="font-display text-2xl sm:text-3xl font-bold">
             {getLocalizedField(course, "title", locale)}
           </h1>
           {getLocalizedField(course, "subtitle", locale) && (
-            <p className="text-base text-muted-foreground">
+            <p className="text-base text-muted-foreground max-w-xl mx-auto">
               {getLocalizedField(course, "subtitle", locale)}
             </p>
           )}
         </div>
 
         {/* Intro Video */}
-        <div className="space-y-3">
+        <div className="space-y-3 max-w-3xl mx-auto">
           <h2 className="text-center text-lg font-semibold">
             {tPayment("introVideo")}
           </h2>
@@ -122,124 +134,59 @@ export default async function EnrollPage() {
           </div>
         </div>
 
-        {/* What's included */}
-        <Card className="border-border/50">
-          <CardContent className="pt-6 space-y-6">
-            <div>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                {tLanding("whatsIncluded")}
-              </h3>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {features.map((feature) => (
-                  <li key={feature.label} className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-gold/10">
-                      <feature.icon className="h-4 w-4 text-gold" />
-                    </div>
-                    <span className="text-sm font-medium">{feature.label}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        {/* Pricing tiers */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
 
-            <div className="rounded-lg bg-muted/60 p-4">
-              <ul className="space-y-2">
-                {[
-                  tLanding("videoLessons", { count: lessonCount }),
-                  tLanding("selfPaced"),
-                  tLanding("certificateCompletion"),
-                  tLanding("lifetimeAccess"),
-                ].map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-2 text-sm text-muted-foreground"
-                  >
-                    <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-gold" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Pricing cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          {/* Pay in Full */}
-          <Card className="relative flex flex-col overflow-hidden border-border/50 shadow-xl shadow-black/5">
-            <div className="h-1.5 w-full bg-gradient-to-r from-gold via-gold-light to-gold" />
-            <CardHeader className="text-center space-y-2">
-              <div className="flex justify-center gap-2">
-                <Badge className="bg-gold/10 text-gold hover:bg-gold/10 px-3">
-                  {tPayment("bestValue")}
-                </Badge>
-                <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/10 px-3">
-                  {tPayment("saveAmount", { amount: savings.toFixed(0) })}
-                </Badge>
-              </div>
+          {/* ── BASIC ── */}
+          <Card className="relative flex flex-col overflow-hidden border-border/50 shadow-lg shadow-black/5">
+            <div className="h-1.5 w-full bg-muted" />
+            <CardHeader className="text-center space-y-2 pb-4">
               <CardTitle className="font-display text-xl">
-                {tPayment("payInFull")}
+                {tPayment("tierBasicName")}
               </CardTitle>
-              <CardDescription>{tPayment("oneTimeDesc")}</CardDescription>
+              <CardDescription className="text-sm">
+                {tPayment("tierBasicDesc")}
+              </CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 flex items-center justify-center text-center">
-              <div className="flex items-baseline justify-center gap-1">
-                <span className="font-display text-4xl font-bold text-foreground">
-                  ${(totalPrice / 100).toFixed(0)}
-                </span>
-                <span className="text-sm text-muted-foreground">USD</span>
-              </div>
-            </CardContent>
-            <Separator />
-            <CardFooter className="flex-col gap-3 pt-6 pb-6">
-              <CheckoutButton
-                courseId={course.id}
-                isSignedIn={!!session?.user}
-                paymentType="ONE_TIME"
-                label={tPayment("payInFull")}
-              />
-              <p className="text-center text-xs text-muted-foreground">
-                {tLanding("secureCheckout")}
-              </p>
-            </CardFooter>
-          </Card>
 
-          {/* Payment Plan */}
-          <Card className="relative flex flex-col overflow-hidden border-border/50 shadow-xl shadow-black/5">
-            <div className="h-1.5 w-full bg-gradient-to-r from-gold via-gold/70 to-gold" />
-            <CardHeader className="text-center space-y-2">
-              <Badge className="mx-auto bg-gold/10 text-gold hover:bg-gold/10 px-3">
-                {tPayment("paymentPlan")}
-              </Badge>
-              <CardTitle className="font-display text-xl">
-                {tPayment("paymentPlan")}
-              </CardTitle>
-              <CardDescription>{tPayment("installmentDesc")}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1 flex items-center justify-center text-center">
-              <div>
+            <CardContent className="flex-1 space-y-4">
+              {/* Price */}
+              <div className="text-center">
                 <div className="flex items-baseline justify-center gap-1">
-                  <span className="font-display text-4xl font-bold text-foreground">
-                    ${(monthlyPrice / 100).toFixed(0)}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    /{tPayment("perMonth")}
-                  </span>
+                  <span className="font-display text-4xl font-bold">$497</span>
+                  <span className="text-sm text-muted-foreground">USD</span>
                 </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {INSTALLMENT_COUNT} {tPayment("months")}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {tPayment("totalCost", { amount: (installmentTotal / 100).toFixed(0) })}
+                <p className="text-xs text-muted-foreground mt-1">
+                  {tPayment("tierLifetimeAccess")}
                 </p>
               </div>
+
+              <Separator />
+
+              {/* Features */}
+              <ul className="space-y-2.5">
+                {basicFeatures.map((f) => (
+                  <li key={f.label} className="flex items-center gap-2.5 text-sm">
+                    {f.included ? (
+                      <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-primary" />
+                    ) : (
+                      <XCircle className="h-4 w-4 flex-shrink-0 text-muted-foreground/40" />
+                    )}
+                    <span className={f.included ? "text-foreground" : "text-muted-foreground/60 line-through"}>
+                      {f.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </CardContent>
+
             <Separator />
             <CardFooter className="flex-col gap-3 pt-6 pb-6">
               <CheckoutButton
                 courseId={course.id}
                 isSignedIn={!!session?.user}
-                paymentType="INSTALLMENT"
-                label={tPayment("selectPlan")}
+                tier="BASIC"
+                label={tPayment("tierEnrollBasic")}
                 variant="outline"
               />
               <p className="text-center text-xs text-muted-foreground">
@@ -247,6 +194,135 @@ export default async function EnrollPage() {
               </p>
             </CardFooter>
           </Card>
+
+          {/* ── STANDARD (Most Popular) ── */}
+          <Card className="relative flex flex-col overflow-hidden border-primary shadow-xl shadow-primary/10 scale-[1.02]">
+            <div className="h-1.5 w-full bg-primary" />
+            <div className="absolute top-4 right-4">
+              <Badge className="bg-primary text-primary-foreground px-3 text-xs font-semibold">
+                {tPayment("tierMostPopular")}
+              </Badge>
+            </div>
+            <CardHeader className="text-center space-y-2 pb-4">
+              <CardTitle className="font-display text-xl">
+                {tPayment("tierStandardName")}
+              </CardTitle>
+              <CardDescription className="text-sm">
+                {tPayment("tierStandardDesc")}
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="flex-1 space-y-4">
+              {/* Price */}
+              <div className="text-center">
+                <div className="flex items-baseline justify-center gap-1">
+                  <span className="font-display text-4xl font-bold text-primary">$797</span>
+                  <span className="text-sm text-muted-foreground">USD</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {tPayment("tierLifetimeAccess")}
+                </p>
+              </div>
+
+              <Separator />
+
+              {/* Features */}
+              <ul className="space-y-2.5">
+                {standardFeatures.map((f) => (
+                  <li key={f.label} className="flex items-center gap-2.5 text-sm">
+                    {f.included ? (
+                      <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-primary" />
+                    ) : (
+                      <XCircle className="h-4 w-4 flex-shrink-0 text-muted-foreground/40" />
+                    )}
+                    <span className={f.included ? "text-foreground" : "text-muted-foreground/60 line-through"}>
+                      {f.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+
+            <Separator />
+            <CardFooter className="flex-col gap-3 pt-6 pb-6">
+              <CheckoutButton
+                courseId={course.id}
+                isSignedIn={!!session?.user}
+                tier="STANDARD"
+                label={tPayment("tierEnrollStandard")}
+                variant="default"
+              />
+              <p className="text-center text-xs text-muted-foreground">
+                {tLanding("secureCheckout")}
+              </p>
+            </CardFooter>
+          </Card>
+
+          {/* ── PREMIUM / VIP ── */}
+          <Card className="relative flex flex-col overflow-hidden border-gold/60 shadow-xl shadow-gold/10">
+            <div className="h-1.5 w-full bg-gradient-to-r from-gold-dark via-gold to-gold-light" />
+            <div className="absolute top-4 right-4">
+              <Badge className="bg-gold text-white hover:bg-gold px-3 text-xs font-semibold gap-1">
+                <Crown className="h-3 w-3" />
+                {tPayment("tierVip")}
+              </Badge>
+            </div>
+            <CardHeader className="text-center space-y-2 pb-4">
+              <CardTitle className="font-display text-xl">
+                {tPayment("tierPremiumName")}
+              </CardTitle>
+              <CardDescription className="text-sm">
+                {tPayment("tierPremiumDesc")}
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="flex-1 space-y-4">
+              {/* Price */}
+              <div className="text-center">
+                <div className="flex items-baseline justify-center gap-1">
+                  <span className="font-display text-4xl font-bold text-gold">$1,297</span>
+                  <span className="text-sm text-muted-foreground">USD</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {tPayment("tierLifetimeAccess")}
+                </p>
+              </div>
+
+              <Separator />
+
+              {/* Features */}
+              <ul className="space-y-2.5">
+                {premiumFeatures.map((f) => (
+                  <li key={f.label} className="flex items-center gap-2.5 text-sm">
+                    <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-gold" />
+                    <span className="text-foreground">{f.label}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Tagline */}
+              <div className="rounded-lg border border-gold/20 bg-gold/5 p-3">
+                <p className="text-xs text-muted-foreground italic leading-relaxed">
+                  &ldquo;{tPayment("tierPremiumTagline")}&rdquo;
+                </p>
+              </div>
+            </CardContent>
+
+            <Separator />
+            <CardFooter className="flex-col gap-3 pt-6 pb-6">
+              <CheckoutButton
+                courseId={course.id}
+                isSignedIn={!!session?.user}
+                tier="PREMIUM"
+                label={tPayment("tierEnrollPremium")}
+                variant="premium"
+              />
+              <p className="text-center text-xs text-muted-foreground">
+                {tLanding("secureCheckout")}
+              </p>
+            </CardFooter>
+          </Card>
+
         </div>
       </div>
     </div>

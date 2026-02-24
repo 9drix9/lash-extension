@@ -10,15 +10,15 @@ import { toast } from "sonner";
 interface CheckoutButtonProps {
   courseId: string;
   isSignedIn: boolean;
-  paymentType: "ONE_TIME" | "INSTALLMENT";
+  tier: "BASIC" | "STANDARD" | "PREMIUM";
   label: string;
-  variant?: "default" | "outline";
+  variant?: "default" | "outline" | "premium";
 }
 
 export function CheckoutButton({
   courseId,
   isSignedIn,
-  paymentType,
+  tier,
   label,
   variant = "default",
 }: CheckoutButtonProps) {
@@ -37,7 +37,7 @@ export function CheckoutButton({
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ courseId, paymentType }),
+        body: JSON.stringify({ courseId, tier }),
       });
 
       const data = await res.json();
@@ -46,7 +46,6 @@ export function CheckoutButton({
         throw new Error(data.error || "Checkout failed");
       }
 
-      // Redirect to Stripe Checkout
       window.location.href = data.url;
     } catch (err) {
       console.error("Checkout error:", err);
@@ -56,15 +55,16 @@ export function CheckoutButton({
   }
 
   const baseClass =
-    variant === "default"
+    variant === "premium"
       ? "h-12 w-full gap-2 rounded-lg bg-gold text-base font-semibold text-white shadow-lg shadow-gold/25 transition-all hover:bg-gold-dark hover:shadow-xl hover:shadow-gold/30"
-      : "h-12 w-full gap-2 rounded-lg border-2 border-gold text-base font-semibold text-gold transition-all hover:bg-gold/5";
+      : variant === "default"
+      ? "h-12 w-full gap-2 rounded-lg bg-primary text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-primary/90 hover:shadow-xl"
+      : "h-12 w-full gap-2 rounded-lg border-2 border-border text-base font-semibold transition-all hover:bg-muted/50";
 
   return (
     <Button
       onClick={handleCheckout}
       disabled={isLoading}
-      variant={variant}
       className={baseClass}
     >
       {isLoading ? (

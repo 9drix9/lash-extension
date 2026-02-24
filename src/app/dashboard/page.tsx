@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocalizedField } from "@/lib/utils";
 import { DashboardClient } from "./dashboard-client";
-import { hasActivePayment } from "@/lib/actions/payment";
+import { hasActivePayment, getUserTier } from "@/lib/actions/payment";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -46,6 +46,8 @@ export default async function DashboardPage() {
   if (!paid) {
     redirect("/enroll");
   }
+
+  const userTier = await getUserTier(session.user.id, course.id);
 
   // Get all progress data
   const moduleProgress = await prisma.moduleProgress.findMany({
@@ -89,6 +91,8 @@ export default async function DashboardPage() {
       lessonProgress.some((lp) => lp.lessonId === l.id && lp.completed)
     ).length;
 
+    const isVipLocked = !!(mod.isPremiumOnly && userTier !== "PREMIUM");
+
     return {
       id: mod.id,
       title: getLocalizedField(mod, "title", locale),
@@ -96,6 +100,8 @@ export default async function DashboardPage() {
       imageUrl: mod.imageUrl,
       order: mod.order,
       isBonus: mod.isBonus,
+      isPremiumOnly: mod.isPremiumOnly,
+      isVipLocked,
       status: status as "LOCKED" | "UNLOCKED" | "COMPLETED",
       quizPassed,
       quizId: quizId || null,
@@ -178,6 +184,7 @@ export default async function DashboardPage() {
       quizzesRequired={quizzesRequired}
       quizzesPassed={quizzesPassed}
       allMilestones={allMilestones}
+      userTier={userTier}
     />
   );
 }

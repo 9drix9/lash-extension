@@ -10,8 +10,10 @@ export interface ModuleData {
   imageUrl?: string | null;
   order: number;
   isBonus: boolean;
+  isPremiumOnly?: boolean;
   status: "LOCKED" | "UNLOCKED" | "COMPLETED";
   quizPassed: boolean;
+  isVipLocked?: boolean;
 }
 
 interface ModuleGridProps {
@@ -41,9 +43,11 @@ export function ModuleGrid({ modules, className }: ModuleGridProps) {
               imageUrl: mod.imageUrl,
               order: mod.order,
               isBonus: mod.isBonus,
+              isPremiumOnly: mod.isPremiumOnly,
             }}
             status={mod.status}
             quizPassed={mod.quizPassed}
+            isVipLocked={mod.isVipLocked}
           />
         </div>
       ))}

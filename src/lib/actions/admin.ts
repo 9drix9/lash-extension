@@ -154,6 +154,7 @@ export async function updateModule(
     descEn?: string;
     descEs?: string;
     imageUrl?: string;
+    isPremiumOnly?: boolean;
   }
 ) {
   await requireAdmin();

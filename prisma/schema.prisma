@@ -116,6 +116,7 @@ model Module {
   imageUrl    String  @default("")
   order       Int
   isBonus     Boolean @default(false)
+  isPremiumOnly Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -419,6 +420,7 @@ model Payment {
   stripeCustomerId     String?
   stripeSubscriptionId String?
   paymentType          String   // ONE_TIME or INSTALLMENT
+  tier                 String   @default("BASIC") // BASIC, STANDARD, PREMIUM
   status               String   @default("PENDING") // PENDING, ACTIVE, COMPLETED, CANCELLED, PAST_DUE
   amountTotal          Int      // total course price in cents
   amountPaid           Int      @default(0)

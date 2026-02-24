@@ -38,6 +38,7 @@ interface ModuleData {
   imageUrl: string;
   order: number;
   isBonus: boolean;
+  isPremiumOnly: boolean;
   lessonCount: number;
   hasQuiz: boolean;
 }
@@ -64,6 +65,7 @@ export function ModulesClient({ modules }: ModulesClientProps) {
           descEn: formData.get("descEn") as string,
           descEs: formData.get("descEs") as string,
           imageUrl: formData.get("imageUrl") as string,
+          isPremiumOnly: formData.get("isPremiumOnly") === "on",
         });
         toast.success(tc("success"));
       } catch {
@@ -80,9 +82,14 @@ export function ModulesClient({ modules }: ModulesClientProps) {
         <Card key={mod.id} className="flex flex-col">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <Badge variant={mod.isBonus ? "secondary" : "default"}>
-                {mod.isBonus ? t("bonusLabel") : `#${mod.order}`}
-              </Badge>
+              <div className="flex items-center gap-1.5">
+                <Badge variant={mod.isBonus ? "secondary" : "default"}>
+                  {mod.isBonus ? t("bonusLabel") : `#${mod.order}`}
+                </Badge>
+                {mod.isPremiumOnly && (
+                  <Badge className="bg-gold text-white hover:bg-gold text-xs">VIP</Badge>
+                )}
+              </div>
               <div className="flex gap-1.5">
                 <Badge variant="outline">{t("lessonCount", { count: mod.lessonCount })}</Badge>
                 {mod.hasQuiz && <Badge variant="outline">{t("quizHeader")}</Badge>}
@@ -205,6 +212,19 @@ export function ModulesClient({ modules }: ModulesClientProps) {
                       defaultValue={mod.imageUrl}
                       placeholder="https://..."
                     />
+                  </div>
+
+                  <div className="flex items-center gap-2 rounded-lg border border-gold/30 bg-gold/5 p-3">
+                    <input
+                      type="checkbox"
+                      id={`isPremiumOnly-${mod.id}`}
+                      name="isPremiumOnly"
+                      defaultChecked={mod.isPremiumOnly}
+                      className="h-4 w-4 rounded border-gold accent-gold"
+                    />
+                    <Label htmlFor={`isPremiumOnly-${mod.id}`} className="cursor-pointer text-sm font-medium">
+                      VIP Masterclass only (locks this module for Basic & Standard tier users)
+                    </Label>
                   </div>
 
                   <DialogFooter>

@@ -13,7 +13,8 @@
       "Bash(Select-String -Pattern \"error TS\")",
       "Bash(npx prisma generate:*)",
       "Bash(npx dotenv:*)",
-      "Bash(cd C:\\\\Users\\\\ughty\\\\OneDrive\\\\Desktop\\\\lash-extension:*)"
+      "Bash(cd C:\\\\Users\\\\ughty\\\\OneDrive\\\\Desktop\\\\lash-extension:*)",
+      "Bash(echo Exit code: $?:*)"
     ]
   }
 }

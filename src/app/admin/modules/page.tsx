@@ -34,6 +34,7 @@ export default async function ModulesPage() {
     imageUrl: mod.imageUrl,
     order: mod.order,
     isBonus: mod.isBonus,
+    isPremiumOnly: mod.isPremiumOnly,
     lessonCount: mod._count.lessons,
     hasQuiz: !!mod.quiz,
   }));

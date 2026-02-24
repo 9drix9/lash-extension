@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Lock, Check, Star, BookOpen } from "lucide-react";
+import { Lock, Check, Star, BookOpen, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface ModuleTileProps {
@@ -13,13 +13,16 @@ export interface ModuleTileProps {
     imageUrl?: string | null;
     order: number;
     isBonus: boolean;
+    isPremiumOnly?: boolean;
   };
   status: "LOCKED" | "UNLOCKED" | "COMPLETED";
   quizPassed: boolean;
+  isVipLocked?: boolean;
 }
 
-export function ModuleTile({ module, status, quizPassed }: ModuleTileProps) {
+export function ModuleTile({ module, status, quizPassed, isVipLocked }: ModuleTileProps) {
   const t = useTranslations("dashboard");
+  const tPayment = useTranslations("payment");
 
   const isLocked = status === "LOCKED";
   const isCompleted = status === "COMPLETED";
@@ -58,7 +61,7 @@ export function ModuleTile({ module, status, quizPassed }: ModuleTileProps) {
           </span>
 
           {/* Bonus badge */}
-          {module.isBonus && (
+          {module.isBonus && !module.isPremiumOnly && (
             <span
               className={cn(
                 "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5",
@@ -67,6 +70,19 @@ export function ModuleTile({ module, status, quizPassed }: ModuleTileProps) {
             >
               <Star className="h-3 w-3" />
               {t("bonus")}
+            </span>
+          )}
+
+          {/* VIP badge for premium-only modules */}
+          {module.isPremiumOnly && (
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5",
+                "bg-gold/90 text-xs font-semibold text-white backdrop-blur-sm"
+              )}
+            >
+              <Crown className="h-3 w-3" />
+              VIP
             </span>
           )}
         </div>
@@ -90,7 +106,16 @@ export function ModuleTile({ module, status, quizPassed }: ModuleTileProps) {
 
         {/* Status indicator */}
         <div className="mt-3 flex items-center gap-2">
-          {isLocked && (
+          {isLocked && isVipLocked && (
+            <div className="flex items-center gap-1.5">
+              <Crown className="h-3.5 w-3.5 text-gold/80" />
+              <span className="text-xs text-gold/80 font-medium">
+                {tPayment("vipRequired")}
+              </span>
+            </div>
+          )}
+
+          {isLocked && !isVipLocked && (
             <div className="flex items-center gap-1.5">
               <Lock className="h-3.5 w-3.5 text-white/60" />
               <span className="text-xs text-white/60">

@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      const { userId, courseId, paymentType } = session.metadata || {};
+      const { userId, courseId, paymentType, tier = "BASIC" } = session.metadata || {};
 
       if (!userId || !courseId) break;
 
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
         where: { id: userId },
         data: { enrolledAt: new Date() },
       });
-      await initializeModuleProgress(userId, courseId);
+      await initializeModuleProgress(userId, courseId, tier);
 
       // Track affiliate conversion
       const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -76,10 +76,7 @@ export async function POST(req: NextRequest) {
           where: { code: user.referralCode, status: "APPROVED" },
         });
         if (affiliate && affiliate.userId !== userId) {
-          const course = await prisma.course.findUnique({
-            where: { id: courseId },
-          });
-          const amount = course?.price || 0;
+          const amount = payment.amountTotal;
           const commission = Math.round(
             amount * (affiliate.commissionRate / 100)
           );

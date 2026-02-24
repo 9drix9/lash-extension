@@ -26,6 +26,24 @@ export async function getUserPayment(userId: string, courseId: string) {
   });
 }
 
+export async function getUserTier(
+  userId: string,
+  courseId: string
+): Promise<"BASIC" | "STANDARD" | "PREMIUM"> {
+  const payment = await prisma.payment.findFirst({
+    where: {
+      userId,
+      courseId,
+      status: { in: ["ACTIVE", "COMPLETED"] },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+  const t = payment?.tier;
+  if (t === "PREMIUM") return "PREMIUM";
+  if (t === "STANDARD") return "STANDARD";
+  return "BASIC";
+}
+
 export async function getTransactions() {
   const payments = await prisma.payment.findMany({
     include: {

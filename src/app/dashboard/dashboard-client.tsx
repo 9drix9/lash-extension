@@ -30,6 +30,8 @@ interface ModuleData {
   imageUrl: string;
   order: number;
   isBonus: boolean;
+  isPremiumOnly?: boolean;
+  isVipLocked?: boolean;
   status: "LOCKED" | "UNLOCKED" | "COMPLETED";
   quizPassed: boolean;
   quizId: string | null;
@@ -71,6 +73,7 @@ interface Props {
   quizzesRequired: number;
   quizzesPassed: number;
   allMilestones: AllMilestoneData[];
+  userTier: "BASIC" | "STANDARD" | "PREMIUM";
 }
 
 export function DashboardClient({
@@ -89,6 +92,7 @@ export function DashboardClient({
   quizzesRequired,
   quizzesPassed,
   allMilestones,
+  userTier,
 }: Props) {
   const t = useTranslations("dashboard");
   const [generating, setGenerating] = useState(false);
