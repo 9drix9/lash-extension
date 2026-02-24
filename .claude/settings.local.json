@@ -16,7 +16,8 @@
       "Bash(cd C:\\\\Users\\\\ughty\\\\OneDrive\\\\Desktop\\\\lash-extension:*)",
       "Bash(echo Exit code: $?:*)",
       "Bash(cd:*)",
-      "Bash(echo Exit: $?:*)"
+      "Bash(echo Exit: $?:*)",
+      "Bash(tail:*)"
     ]
   }
 }
