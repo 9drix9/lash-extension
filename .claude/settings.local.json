@@ -12,7 +12,8 @@
       "Bash(Select-String -Pattern \"implicitly has an\" -NotMatch)",
       "Bash(Select-String -Pattern \"error TS\")",
       "Bash(npx prisma generate:*)",
-      "Bash(npx dotenv:*)"
+      "Bash(npx dotenv:*)",
+      "Bash(cd C:\\\\Users\\\\ughty\\\\OneDrive\\\\Desktop\\\\lash-extension:*)"
     ]
   }
 }
