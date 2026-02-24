@@ -363,3 +363,14 @@ export async function addSessionReplay(sessionId: string, replayUrl: string, not
 
   revalidatePath("/live");
 }
+
+export async function deleteLiveSession(sessionId: string) {
+  await requireAdmin();
+
+  await prisma.liveSession.delete({
+    where: { id: sessionId },
+  });
+
+  revalidatePath("/admin/live-sessions");
+  revalidatePath("/live");
+}

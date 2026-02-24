@@ -7,6 +7,7 @@ import {
   createLiveSession,
   updateLiveQuestionStatus,
   addSessionReplay,
+  deleteLiveSession,
 } from "@/lib/actions/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -93,6 +94,17 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
     startTransition(async () => {
       try {
         await updateLiveQuestionStatus(questionId, status);
+        toast.success(tc("success"));
+      } catch {
+        toast.error(tc("error"));
+      }
+    });
+  }
+
+  function handleDeleteSession(sessionId: string) {
+    startTransition(async () => {
+      try {
+        await deleteLiveSession(sessionId);
         toast.success(tc("success"));
       } catch {
         toast.error(tc("error"));
@@ -240,6 +252,41 @@ export function LiveSessionsClient({ sessions }: LiveSessionsClientProps) {
                   {t("rsvpsCount", { count: session.rsvpCount })}
                 </Badge>
                 <Badge variant="outline">{t("durationDisplay", { count: session.durationMin })}</Badge>
+
+                {/* Delete button with confirmation */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      {tc("delete")}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{tc("delete")} — {session.titleEn}</DialogTitle>
+                      <DialogDescription>
+                        This will permanently delete this live session and all its RSVPs and questions. This cannot be undone.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant="outline">{tc("cancel")}</Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button
+                          variant="destructive"
+                          disabled={isPending}
+                          onClick={() => handleDeleteSession(session.id)}
+                        >
+                          {tc("delete")}
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
             <p className="text-sm text-muted-foreground">

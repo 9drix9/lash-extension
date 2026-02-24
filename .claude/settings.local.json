@@ -15,7 +15,8 @@
       "Bash(npx dotenv:*)",
       "Bash(cd C:\\\\Users\\\\ughty\\\\OneDrive\\\\Desktop\\\\lash-extension:*)",
       "Bash(echo Exit code: $?:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(echo Exit: $?:*)"
     ]
   }
 }
