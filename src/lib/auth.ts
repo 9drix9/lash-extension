@@ -23,6 +23,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma) as any,
   providers: [Google],
   session: { strategy: "jwt" },
+  trustHost: true,
   pages: {
     signIn: "/auth/signin",
   },
