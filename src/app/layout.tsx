@@ -40,7 +40,7 @@ export default async function RootLayout({
   if (session?.user) {
     const course = await getActiveCourse();
     if (course) {
-      isPaid = await hasActivePayment(session.user.id, course.id);
+      isPaid = await hasActivePayment(session.user.id, course.id, session.user.role);
     }
   }
 

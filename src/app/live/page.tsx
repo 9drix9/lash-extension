@@ -14,7 +14,7 @@ export default async function LivePage() {
   }
 
   const course = await getActiveCourse();
-  if (!course || !(await hasActivePayment(session.user.id, course.id))) {
+  if (!course || !(await hasActivePayment(session.user.id, course.id, session.user.role))) {
     redirect("/enroll");
   }
 

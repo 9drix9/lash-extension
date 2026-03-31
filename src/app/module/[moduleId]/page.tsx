@@ -31,7 +31,7 @@ export default async function ModulePage({
   if (!mod) notFound();
 
   // Check payment
-  const paid = await hasActivePayment(session.user.id, mod.courseId);
+  const paid = await hasActivePayment(session.user.id, mod.courseId, session.user.role);
   if (!paid) redirect("/enroll");
 
   // Check access
@@ -44,7 +44,7 @@ export default async function ModulePage({
     },
   });
 
-  if (!moduleProgress || moduleProgress.status === "LOCKED") {
+  if (session.user.role !== "ADMIN" && (!moduleProgress || moduleProgress.status === "LOCKED")) {
     redirect("/dashboard");
   }
 
@@ -98,7 +98,7 @@ export default async function ModulePage({
       quizId={mod.quiz?.id || null}
       quizPassed={quizPassed}
       allLessonsComplete={allLessonsComplete}
-      status={moduleProgress.status}
+      status={moduleProgress?.status ?? "UNLOCKED"}
     />
   );
 }

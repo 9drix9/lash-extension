@@ -4,8 +4,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function hasActivePayment(
   userId: string,
-  courseId: string
+  courseId: string,
+  role?: string
 ): Promise<boolean> {
+  if (role === "ADMIN") return true;
   const payment = await prisma.payment.findFirst({
     where: {
       userId,
@@ -28,8 +30,10 @@ export async function getUserPayment(userId: string, courseId: string) {
 
 export async function getUserTier(
   userId: string,
-  courseId: string
+  courseId: string,
+  role?: string
 ): Promise<"BASIC" | "STANDARD" | "PREMIUM"> {
+  if (role === "ADMIN") return "PREMIUM";
   const payment = await prisma.payment.findFirst({
     where: {
       userId,

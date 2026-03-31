@@ -23,7 +23,7 @@ export default async function QuizPage({
     include: { module: true },
   });
   if (quiz) {
-    const paid = await hasActivePayment(session.user.id, quiz.module.courseId);
+    const paid = await hasActivePayment(session.user.id, quiz.module.courseId, session.user.role);
     if (!paid) redirect("/enroll");
   }
 

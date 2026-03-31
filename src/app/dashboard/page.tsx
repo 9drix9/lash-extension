@@ -42,12 +42,12 @@ export default async function DashboardPage() {
   }
 
   // Check payment — redirect to enroll if no active payment
-  const paid = await hasActivePayment(session.user.id, course.id);
+  const paid = await hasActivePayment(session.user.id, course.id, session.user.role);
   if (!paid) {
     redirect("/enroll");
   }
 
-  const userTier = await getUserTier(session.user.id, course.id);
+  const userTier = await getUserTier(session.user.id, course.id, session.user.role);
 
   // Get all progress data
   const moduleProgress = await prisma.moduleProgress.findMany({
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
   // Build module data
   const modulesData = course.modules.map((mod) => {
     const progress = moduleProgress.find((mp) => mp.moduleId === mod.id);
-    const status = progress?.status || (mod.isBonus ? "UNLOCKED" : "LOCKED");
+    const status = progress?.status || (session.user.role === "ADMIN" || mod.isBonus ? "UNLOCKED" : "LOCKED");
 
     const quizId = mod.quiz?.id;
     const bestAttempt = quizId
