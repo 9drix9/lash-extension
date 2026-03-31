@@ -18,6 +18,7 @@ import {
   Clock,
   ChevronRight,
   CreditCard,
+  Eye,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -176,6 +177,23 @@ export function AdminClient({ stats, alerts }: AdminClientProps) {
         <h2 className="text-xl font-semibold tracking-tight">{t("manage")}</h2>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Preview Course Card */}
+        <Link href="/dashboard" className="group">
+          <Card className="h-full border-primary/30 bg-primary/5 transition-colors group-hover:border-primary group-hover:shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg text-primary">
+                <Eye className="h-5 w-5" />
+                {t("previewCourse")}
+              </CardTitle>
+              <CardDescription>{t("previewCourseDesc")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <span className="inline-flex items-center text-sm font-medium text-primary">
+                {t("previewCourseBtn")} <ChevronRight className="ml-1 h-4 w-4" />
+              </span>
+            </CardContent>
+          </Card>
+        </Link>
         {navLinks.map((link) => (
           <Link key={link.href} href={link.href} className="group">
             <Card className="h-full transition-colors group-hover:border-primary/50 group-hover:shadow-md">
