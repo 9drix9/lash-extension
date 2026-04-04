@@ -49,6 +49,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.role = user.role;
         token.locale = user.locale;
         token.id = user.id;
+        token.email = user.email;
       } else if (token.id) {
         // Re-fetch role on every token refresh so revocations take effect immediately
         const dbUser = await prisma.user.findUnique({
@@ -64,6 +65,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.user.locale = (token.locale as string) || "en";
+        // Ensure email is always set from token
+        if (token.email) session.user.email = token.email as string;
       }
       return session;
     },

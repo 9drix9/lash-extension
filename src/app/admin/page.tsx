@@ -12,10 +12,11 @@ export default async function AdminDashboardPage() {
 
   const t = await getTranslations("admin");
 
-  // Ping lastActivityAt so online status works
-  await prisma.user.update({
+  // Ping lastActivityAt so online status works + fetch email from DB (source of truth)
+  const currentAdmin = await prisma.user.update({
     where: { id: session.user.id },
     data: { lastActivityAt: new Date() },
+    select: { email: true },
   });
 
   const [stats, alerts, adminBoard] = await Promise.all([
@@ -44,7 +45,7 @@ export default async function AdminDashboardPage() {
           </Link>
         </div>
 
-        <AdminClient stats={stats} alerts={alerts} adminBoard={adminBoard} currentUserEmail={session.user.email} />
+        <AdminClient stats={stats} alerts={alerts} adminBoard={adminBoard} currentUserEmail={currentAdmin.email} />
       </div>
     </div>
   );

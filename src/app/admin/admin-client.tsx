@@ -273,12 +273,14 @@ export function AdminClient({ stats, alerts, adminBoard, currentUserEmail }: Adm
                   {isSuperAdmin && !isSelf && !isSuperAdminCard && (
                     <Dialog>
                       <DialogTrigger asChild>
-                        <button
-                          className="shrink-0 rounded p-1 text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-colors"
-                          title="Revoke admin access"
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="shrink-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                         >
-                          <ShieldOff className="h-4 w-4" />
-                        </button>
+                          <ShieldOff className="h-3.5 w-3.5 mr-1" />
+                          Remove
+                        </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
