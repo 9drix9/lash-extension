@@ -257,7 +257,7 @@ export function AdminClient({ stats, alerts, adminBoard, currentUserEmail }: Adm
                     <div className="flex items-center gap-1.5">
                       <p className="truncate text-sm font-medium">{admin.name}</p>
                       {isSuperAdminCard && (
-                        <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" title="Super Admin" />
+                        <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
                       )}
                     </div>
                     <p className="truncate text-xs text-muted-foreground">{admin.email}</p>
