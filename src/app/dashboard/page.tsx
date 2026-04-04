@@ -75,7 +75,10 @@ export default async function DashboardPage() {
   // Build module data
   const modulesData = course.modules.map((mod) => {
     const progress = moduleProgress.find((mp) => mp.moduleId === mod.id);
-    const status = progress?.status || (session.user.role === "ADMIN" || mod.isBonus ? "UNLOCKED" : "LOCKED");
+    const isAdmin = session.user.role === "ADMIN";
+    const status = isAdmin
+      ? (progress?.status === "COMPLETED" ? "COMPLETED" : "UNLOCKED")
+      : (progress?.status || (mod.isBonus ? "UNLOCKED" : "LOCKED"));
 
     const quizId = mod.quiz?.id;
     const bestAttempt = quizId
@@ -91,7 +94,7 @@ export default async function DashboardPage() {
       lessonProgress.some((lp) => lp.lessonId === l.id && lp.completed)
     ).length;
 
-    const isVipLocked = !!(mod.isPremiumOnly && userTier !== "PREMIUM");
+    const isVipLocked = !isAdmin && !!(mod.isPremiumOnly && userTier !== "PREMIUM");
 
     return {
       id: mod.id,
