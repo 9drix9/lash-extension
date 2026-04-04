@@ -32,19 +32,21 @@ export async function getEnhancedAdminStats() {
     revenue,
     certificates,
   ] = await Promise.all([
-    prisma.user.count({ where: { role: "STUDENT" } }),
+    prisma.user.count({ where: { role: "STUDENT", removedAt: null } }),
     prisma.user.count({
-      where: { role: "STUDENT", enrolledAt: { not: null } },
+      where: { role: "STUDENT", removedAt: null, enrolledAt: { not: null } },
     }),
     prisma.user.count({
       where: {
         role: "STUDENT",
+        removedAt: null,
         lastActivityAt: { gte: startOfToday },
       },
     }),
     prisma.user.count({
       where: {
         role: "STUDENT",
+        removedAt: null,
         lastActivityAt: { gte: sevenDaysAgo },
       },
     }),
@@ -69,6 +71,7 @@ export async function getEnhancedAdminStats() {
   const inactive7d = await prisma.user.count({
     where: {
       role: "STUDENT",
+      removedAt: null,
       enrolledAt: { not: null },
       OR: [
         { lastActivityAt: { lt: sevenDaysAgo } },
@@ -137,10 +140,11 @@ export async function getRiskAlerts() {
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
   const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
 
-  // Inactive students (7+ days)
+  // Inactive students (7+ days, excluding removed)
   const inactive = await prisma.user.findMany({
     where: {
       role: "STUDENT",
+      removedAt: null,
       enrolledAt: { not: null },
       OR: [
         { lastActivityAt: { lt: sevenDaysAgo } },

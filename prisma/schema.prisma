@@ -20,6 +20,7 @@ model User {
   locale        String    @default("en")
   enrolledAt     DateTime?
   lastActivityAt DateTime?
+  removedAt      DateTime?
   referralCode   String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt

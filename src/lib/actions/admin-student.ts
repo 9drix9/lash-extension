@@ -27,7 +27,7 @@ export async function getStudentsEnhanced() {
   const totalRequired = course?.modules.length || 0;
 
   const students = await prisma.user.findMany({
-    where: { role: "STUDENT" },
+    where: { role: "STUDENT", removedAt: null },
     include: {
       _count: {
         select: { quizAttempts: true, certificates: true },
@@ -424,4 +424,58 @@ export async function grantCertificate(studentId: string, courseId: string) {
   revalidatePath("/admin/certificates");
 
   return cert;
+}
+
+// ─── REMOVE STUDENT FROM COURSE ─────────────────────
+
+export async function removeStudentFromCourse(studentId: string) {
+  const session = await requireAdmin();
+
+  const student = await prisma.user.findUnique({ where: { id: studentId } });
+  if (!student) throw new Error("Student not found");
+
+  // Mark as removed and cancel active payments
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: studentId },
+      data: { removedAt: new Date() },
+    }),
+    prisma.payment.updateMany({
+      where: { userId: studentId, status: { in: ["ACTIVE", "COMPLETED", "PENDING"] } },
+      data: { status: "CANCELLED" },
+    }),
+  ]);
+
+  await logAuditEvent(session.user.id, "REMOVE_STUDENT", "USER", studentId, {
+    studentEmail: student.email,
+  });
+
+  revalidatePath("/admin/students");
+  revalidatePath("/admin/removed-students");
+  revalidatePath("/admin");
+}
+
+// ─── GET REMOVED STUDENTS ───────────────────────────
+
+export async function getRemovedStudents() {
+  await requireAdmin();
+
+  const students = await prisma.user.findMany({
+    where: { role: "STUDENT", removedAt: { not: null } },
+    include: {
+      payments: { orderBy: { createdAt: "desc" }, take: 1 },
+      _count: { select: { moduleProgress: true, certificates: true } },
+    },
+    orderBy: { removedAt: "desc" },
+  });
+
+  return students.map((s) => ({
+    id: s.id,
+    name: s.name || "No name",
+    email: s.email,
+    enrolledAt: s.enrolledAt?.toISOString() || null,
+    removedAt: s.removedAt!.toISOString(),
+    paymentStatus: s.payments[0]?.status || null,
+    certificates: s._count.certificates,
+  }));
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { resetStudentProgress } from "@/lib/actions/admin";
+import { removeStudentFromCourse } from "@/lib/actions/admin-student";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +20,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Search, ArrowUpDown, Download } from "lucide-react";
+import { Search, ArrowUpDown, Download, UserX } from "lucide-react";
 
 interface Student {
   id: string;
@@ -50,6 +51,7 @@ export function StudentsClient({ students }: StudentsClientProps) {
   const tc = useTranslations("common");
   const [isPending, startTransition] = useTransition();
   const [resetId, setResetId] = useState<string | null>(null);
+  const [removeId, setRemoveId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [sortKey, setSortKey] = useState<SortKey>("enrolledAt");
@@ -62,6 +64,20 @@ export function StudentsClient({ students }: StudentsClientProps) {
       setSortKey(key);
       setSortDir("desc");
     }
+  }
+
+  function handleRemove(studentId: string) {
+    setRemoveId(studentId);
+    startTransition(async () => {
+      try {
+        await removeStudentFromCourse(studentId);
+        toast.success("Student removed from course");
+      } catch {
+        toast.error(tc("error"));
+      } finally {
+        setRemoveId(null);
+      }
+    });
   }
 
   function handleReset(studentId: string) {
@@ -164,13 +180,22 @@ export function StudentsClient({ students }: StudentsClientProps) {
       <CardHeader className="space-y-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-lg">{t("students")}</CardTitle>
-          <a
-            href="/api/admin/export?type=students"
-            className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
-          >
-            <Download className="h-4 w-4" />
-            {t("exportCsv")}
-          </a>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/admin/removed-students"
+              className="inline-flex items-center gap-1.5 text-sm text-red-600 hover:underline"
+            >
+              <UserX className="h-4 w-4" />
+              Removed Students
+            </Link>
+            <a
+              href="/api/admin/export?type=students"
+              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+            >
+              <Download className="h-4 w-4" />
+              {t("exportCsv")}
+            </a>
+          </div>
         </div>
 
         {/* Search + Filters */}
@@ -272,41 +297,81 @@ export function StudentsClient({ students }: StudentsClientProps) {
                     {riskBadge(student.riskFlag)}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="destructive" size="sm">
-                          {t("resetProgress")}
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>{t("resetProgress")}</DialogTitle>
-                          <DialogDescription>
-                            {t("resetConfirm")}
-                          </DialogDescription>
-                        </DialogHeader>
-                        <p className="text-sm text-muted-foreground">
-                          {t("studentLabel")}: <strong>{student.name}</strong> (
-                          {student.email})
-                        </p>
-                        <DialogFooter>
-                          <DialogClose asChild>
-                            <Button variant="outline">{tc("cancel")}</Button>
-                          </DialogClose>
-                          <DialogClose asChild>
-                            <Button
-                              variant="destructive"
-                              disabled={isPending && resetId === student.id}
-                              onClick={() => handleReset(student.id)}
-                            >
-                              {isPending && resetId === student.id
-                                ? tc("loading")
-                                : t("resetProgress")}
-                            </Button>
-                          </DialogClose>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
+                    <div className="flex items-center justify-end gap-2">
+                      {/* Reset Progress */}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="destructive" size="sm">
+                            {t("resetProgress")}
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>{t("resetProgress")}</DialogTitle>
+                            <DialogDescription>
+                              {t("resetConfirm")}
+                            </DialogDescription>
+                          </DialogHeader>
+                          <p className="text-sm text-muted-foreground">
+                            {t("studentLabel")}: <strong>{student.name}</strong> (
+                            {student.email})
+                          </p>
+                          <DialogFooter>
+                            <DialogClose asChild>
+                              <Button variant="outline">{tc("cancel")}</Button>
+                            </DialogClose>
+                            <DialogClose asChild>
+                              <Button
+                                variant="destructive"
+                                disabled={isPending && resetId === student.id}
+                                onClick={() => handleReset(student.id)}
+                              >
+                                {isPending && resetId === student.id
+                                  ? tc("loading")
+                                  : t("resetProgress")}
+                              </Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+
+                      {/* Remove from Course */}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700">
+                            <UserX className="h-4 w-4 mr-1" />
+                            Remove
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Remove Student from Course</DialogTitle>
+                            <DialogDescription>
+                              This will remove the student from the course and cancel their payment. They will no longer appear in the active student list. This action can be reviewed in Removed Students.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <p className="text-sm text-muted-foreground">
+                            Student: <strong>{student.name}</strong> ({student.email})
+                          </p>
+                          <DialogFooter>
+                            <DialogClose asChild>
+                              <Button variant="outline">{tc("cancel")}</Button>
+                            </DialogClose>
+                            <DialogClose asChild>
+                              <Button
+                                variant="destructive"
+                                disabled={isPending && removeId === student.id}
+                                onClick={() => handleRemove(student.id)}
+                              >
+                                {isPending && removeId === student.id
+                                  ? tc("loading")
+                                  : "Remove from Course"}
+                              </Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </td>
                 </tr>
               ))}
