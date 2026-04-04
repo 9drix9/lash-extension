@@ -33,11 +33,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/auth/signin",
   },
   callbacks: {
+    async signIn({ user }) {
+      // Deny revoked admins from signing in
+      if (user?.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: { role: true },
+        });
+        if (dbUser?.role === "REVOKED_ADMIN") return false;
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
         token.locale = user.locale;
         token.id = user.id;
+      } else if (token.id) {
+        // Re-fetch role on every token refresh so revocations take effect immediately
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { role: true },
+        });
+        if (dbUser) token.role = dbUser.role;
       }
       return token;
     },

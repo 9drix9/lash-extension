@@ -44,7 +44,7 @@ export default async function AdminDashboardPage() {
           </Link>
         </div>
 
-        <AdminClient stats={stats} alerts={alerts} adminBoard={adminBoard} />
+        <AdminClient stats={stats} alerts={alerts} adminBoard={adminBoard} currentUserEmail={session.user.email} />
       </div>
     </div>
   );

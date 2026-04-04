@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 async function requireAdmin() {
   const session = await auth();
@@ -619,4 +620,49 @@ export async function getAdminBoard() {
       online,
     };
   });
+}
+
+// ─── REMOVE ADMIN (super-admin only) ─────────────────
+
+const SUPER_ADMIN_EMAIL = "flamingeosbusiness@gmail.com";
+
+export async function removeAdmin(targetAdminId: string) {
+  const session = await requireAdmin();
+
+  // Only the super-admin can do this
+  if (session.user.email !== SUPER_ADMIN_EMAIL) {
+    throw new Error("Forbidden: only the super-admin can remove admins");
+  }
+
+  // Cannot remove yourself
+  if (targetAdminId === session.user.id) {
+    throw new Error("You cannot remove yourself");
+  }
+
+  const target = await prisma.user.findUnique({
+    where: { id: targetAdminId },
+    select: { email: true, role: true },
+  });
+
+  if (!target || target.role !== "ADMIN") {
+    throw new Error("Admin not found");
+  }
+
+  await prisma.user.update({
+    where: { id: targetAdminId },
+    data: { role: "REVOKED_ADMIN" },
+  });
+
+  // Log audit event
+  await prisma.auditLog.create({
+    data: {
+      adminId: session.user.id,
+      action: "REVOKE_ADMIN",
+      targetType: "USER",
+      targetId: targetAdminId,
+      details: { revokedEmail: target.email },
+    },
+  });
+
+  revalidatePath("/admin");
 }

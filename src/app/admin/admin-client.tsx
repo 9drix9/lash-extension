@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import {
   Users,
   BookOpen,
@@ -20,7 +22,20 @@ import {
   CreditCard,
   Eye,
   ShieldCheck,
+  ShieldOff,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { removeAdmin } from "@/lib/actions/admin-analytics";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -57,10 +72,30 @@ interface AdminClientProps {
   stats: Stats;
   alerts: RiskAlerts;
   adminBoard: AdminUser[];
+  currentUserEmail: string;
 }
 
-export function AdminClient({ stats, alerts, adminBoard }: AdminClientProps) {
+const SUPER_ADMIN_EMAIL = "flamingeosbusiness@gmail.com";
+
+export function AdminClient({ stats, alerts, adminBoard, currentUserEmail }: AdminClientProps) {
   const t = useTranslations("admin");
+  const isSuperAdmin = currentUserEmail === SUPER_ADMIN_EMAIL;
+  const [isPending, startTransition] = useTransition();
+  const [removingId, setRemovingId] = useState<string | null>(null);
+
+  function handleRemoveAdmin(adminId: string) {
+    setRemovingId(adminId);
+    startTransition(async () => {
+      try {
+        await removeAdmin(adminId);
+        toast.success("Admin access revoked. They will be denied on next sign-in.");
+      } catch (e: any) {
+        toast.error(e?.message || "Failed to revoke admin");
+      } finally {
+        setRemovingId(null);
+      }
+    });
+  }
 
   const totalAlerts =
     alerts.inactive.length + alerts.quizStruggle.length + alerts.stuck.length;
@@ -191,44 +226,91 @@ export function AdminClient({ stats, alerts, adminBoard }: AdminClientProps) {
           <Badge variant="outline" className="ml-1">{adminBoard.length}</Badge>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {adminBoard.map((admin) => (
-            <Card key={admin.id} className="relative overflow-hidden">
-              <CardContent className="flex items-center gap-3 p-4">
-                {/* Avatar */}
-                <div className="relative shrink-0">
-                  {admin.image ? (
-                    <img
-                      src={admin.image}
-                      alt={admin.name}
-                      className="h-10 w-10 rounded-full object-cover"
+          {adminBoard.map((admin) => {
+            const isSelf = admin.email === currentUserEmail;
+            const isSuperAdminCard = admin.email === SUPER_ADMIN_EMAIL;
+            return (
+              <Card key={admin.id} className="relative overflow-hidden">
+                <CardContent className="flex items-center gap-3 p-4">
+                  {/* Avatar */}
+                  <div className="relative shrink-0">
+                    {admin.image ? (
+                      <img
+                        src={admin.image}
+                        alt={admin.name}
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                        {admin.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    {/* Online dot */}
+                    <span
+                      className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-background ${
+                        admin.online ? "bg-green-500" : "bg-gray-300"
+                      }`}
                     />
-                  ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                      {admin.name.charAt(0).toUpperCase()}
+                  </div>
+                  {/* Info */}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <p className="truncate text-sm font-medium">{admin.name}</p>
+                      {isSuperAdminCard && (
+                        <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" title="Super Admin" />
+                      )}
                     </div>
+                    <p className="truncate text-xs text-muted-foreground">{admin.email}</p>
+                    <p className={`mt-0.5 text-xs font-medium ${admin.online ? "text-green-600" : "text-muted-foreground"}`}>
+                      {admin.online
+                        ? "● Online"
+                        : admin.lastActivityAt
+                        ? `Last seen ${daysSince(admin.lastActivityAt) === 0 ? "today" : `${daysSince(admin.lastActivityAt)}d ago`}`
+                        : "Never active"}
+                    </p>
+                  </div>
+                  {/* Remove button — only super-admin sees it, can't remove self or super-admin */}
+                  {isSuperAdmin && !isSelf && !isSuperAdminCard && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button
+                          className="shrink-0 rounded p-1 text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-colors"
+                          title="Revoke admin access"
+                        >
+                          <ShieldOff className="h-4 w-4" />
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Revoke Admin Access</DialogTitle>
+                          <DialogDescription>
+                            This will permanently revoke <strong>{admin.name}</strong>&apos;s admin privileges. They will be signed out and denied access if they try to sign in again.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <p className="text-sm text-muted-foreground">
+                          Account: <strong>{admin.email}</strong>
+                        </p>
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                          </DialogClose>
+                          <DialogClose asChild>
+                            <Button
+                              variant="destructive"
+                              disabled={isPending && removingId === admin.id}
+                              onClick={() => handleRemoveAdmin(admin.id)}
+                            >
+                              {isPending && removingId === admin.id ? "Revoking…" : "Revoke Access"}
+                            </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   )}
-                  {/* Online dot */}
-                  <span
-                    className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-background ${
-                      admin.online ? "bg-green-500" : "bg-gray-300"
-                    }`}
-                  />
-                </div>
-                {/* Info */}
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">{admin.name}</p>
-                  <p className="truncate text-xs text-muted-foreground">{admin.email}</p>
-                  <p className={`mt-0.5 text-xs font-medium ${admin.online ? "text-green-600" : "text-muted-foreground"}`}>
-                    {admin.online
-                      ? "● Online"
-                      : admin.lastActivityAt
-                      ? `Last seen ${daysSince(admin.lastActivityAt) === 0 ? "today" : `${daysSince(admin.lastActivityAt)}d ago`}`
-                      : "Never active"}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
 
