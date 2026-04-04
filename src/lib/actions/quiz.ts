@@ -26,18 +26,20 @@ export async function submitQuiz(quizId: string, answers: QuizAnswer[]) {
 
   if (!quiz) throw new Error("Quiz not found");
 
-  // Check module is unlocked for this user
-  const moduleProgress = await prisma.moduleProgress.findUnique({
-    where: {
-      userId_moduleId: {
-        userId: session.user.id,
-        moduleId: quiz.moduleId,
+  // Admins can always submit quizzes regardless of module lock status
+  if (session.user.role !== "ADMIN") {
+    const moduleProgress = await prisma.moduleProgress.findUnique({
+      where: {
+        userId_moduleId: {
+          userId: session.user.id,
+          moduleId: quiz.moduleId,
+        },
       },
-    },
-  });
+    });
 
-  if (!moduleProgress || moduleProgress.status === "LOCKED") {
-    throw new Error("Module is locked");
+    if (!moduleProgress || moduleProgress.status === "LOCKED") {
+      throw new Error("Module is locked");
+    }
   }
 
   // Calculate score
@@ -121,18 +123,20 @@ export async function getQuizForStudent(quizId: string) {
 
   if (!quiz) throw new Error("Quiz not found");
 
-  // Check module access
-  const moduleProgress = await prisma.moduleProgress.findUnique({
-    where: {
-      userId_moduleId: {
-        userId: session.user.id,
-        moduleId: quiz.moduleId,
+  // Admins can always access quizzes regardless of module lock status
+  if (session.user.role !== "ADMIN") {
+    const moduleProgress = await prisma.moduleProgress.findUnique({
+      where: {
+        userId_moduleId: {
+          userId: session.user.id,
+          moduleId: quiz.moduleId,
+        },
       },
-    },
-  });
+    });
 
-  if (!moduleProgress || moduleProgress.status === "LOCKED") {
-    throw new Error("Module is locked");
+    if (!moduleProgress || moduleProgress.status === "LOCKED") {
+      throw new Error("Module is locked");
+    }
   }
 
   // Get previous attempts
@@ -147,7 +151,9 @@ export async function getQuizForStudent(quizId: string) {
   const hasPassed = attempts.some((a) => a.passed);
   const passingScore = quiz.passingScore ?? quiz.module.course.passingScore;
 
-  // Prepare questions - strip correct answers if not passed
+  const isAdmin = session.user.role === "ADMIN";
+
+  // Prepare questions - strip correct answers if not passed (admins always see answers)
   const questions = quiz.questions.map((q) => ({
     id: q.id,
     type: q.type,
@@ -157,8 +163,8 @@ export async function getQuizForStudent(quizId: string) {
     scenarioEs: q.scenarioEs,
     options: q.options,
     order: q.order,
-    // Only include correct answer and explanation if student has passed
-    ...(hasPassed
+    // Admins always see correct answers; students only after passing
+    ...(hasPassed || isAdmin
       ? {
           correctOptionId: q.correctOptionId,
           explanationEn: q.explanationEn,
