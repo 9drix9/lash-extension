@@ -28,19 +28,7 @@ async function main() {
   await prisma.liveSession.deleteMany();
   await prisma.course.deleteMany();
 
-  // ─── ADMIN USER ───────────────────────────────────────
-  console.log("Creating admin user...");
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@lashacademy.com" },
-    update: { role: "ADMIN", name: "Academy Admin" },
-    create: {
-      email: "admin@lashacademy.com",
-      name: "Academy Admin",
-      role: "ADMIN",
-      emailVerified: new Date(),
-    },
-  });
-  console.log(`  Admin: ${admin.email} (${admin.id})`);
+  // No default admin — real admins are set manually in the database.
 
   // ─── COURSE ───────────────────────────────────────────
   console.log("Creating course...");
@@ -250,7 +238,7 @@ async function main() {
   console.log(`  Quizzes: ${quizCount}`);
   console.log(`  Questions: ${questionCount}`);
   console.log(`  Milestones: ${milestones.length}`);
-  console.log(`\n  Admin login: admin@lashacademy.com`);
+  console.log(`\n  Seed complete.`);
 }
 
 main()
