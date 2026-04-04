@@ -577,3 +577,46 @@ export async function getCertificateHistory() {
     issuedAt: c.issuedAt.toISOString(),
   }));
 }
+
+// ─── ADMIN BOARD ─────────────────────────────────────
+
+export async function getAdminBoard() {
+  await requireAdmin();
+
+  const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+  const now = new Date();
+
+  const admins = await prisma.user.findMany({
+    where: { role: "ADMIN" },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      lastActivityAt: true,
+      sessions: {
+        where: { expires: { gt: now } },
+        select: { expires: true },
+        take: 1,
+      },
+    },
+    orderBy: { lastActivityAt: { sort: "desc", nulls: "last" } },
+  });
+
+  return admins.map((a) => {
+    const hasActiveSession = a.sessions.length > 0;
+    const recentlyActive = a.lastActivityAt
+      ? a.lastActivityAt >= fifteenMinutesAgo
+      : false;
+    const online = hasActiveSession && recentlyActive;
+
+    return {
+      id: a.id,
+      name: a.name || a.email,
+      email: a.email,
+      image: a.image || null,
+      lastActivityAt: a.lastActivityAt?.toISOString() || null,
+      online,
+    };
+  });
+}

@@ -19,6 +19,7 @@ import {
   ChevronRight,
   CreditCard,
   Eye,
+  ShieldCheck,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -43,12 +44,22 @@ interface RiskAlerts {
   stuck: { userId: string; name: string; moduleName: string }[];
 }
 
+interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  lastActivityAt: string | null;
+  online: boolean;
+}
+
 interface AdminClientProps {
   stats: Stats;
   alerts: RiskAlerts;
+  adminBoard: AdminUser[];
 }
 
-export function AdminClient({ stats, alerts }: AdminClientProps) {
+export function AdminClient({ stats, alerts, adminBoard }: AdminClientProps) {
   const t = useTranslations("admin");
 
   const totalAlerts =
@@ -171,6 +182,55 @@ export function AdminClient({ stats, alerts }: AdminClientProps) {
           </div>
         </div>
       )}
+
+      {/* Admin Board */}
+      <div className="mb-6">
+        <div className="mb-4 flex items-center gap-2">
+          <ShieldCheck className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-semibold tracking-tight">Admin Board</h2>
+          <Badge variant="outline" className="ml-1">{adminBoard.length}</Badge>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {adminBoard.map((admin) => (
+            <Card key={admin.id} className="relative overflow-hidden">
+              <CardContent className="flex items-center gap-3 p-4">
+                {/* Avatar */}
+                <div className="relative shrink-0">
+                  {admin.image ? (
+                    <img
+                      src={admin.image}
+                      alt={admin.name}
+                      className="h-10 w-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                      {admin.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  {/* Online dot */}
+                  <span
+                    className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-background ${
+                      admin.online ? "bg-green-500" : "bg-gray-300"
+                    }`}
+                  />
+                </div>
+                {/* Info */}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">{admin.name}</p>
+                  <p className="truncate text-xs text-muted-foreground">{admin.email}</p>
+                  <p className={`mt-0.5 text-xs font-medium ${admin.online ? "text-green-600" : "text-muted-foreground"}`}>
+                    {admin.online
+                      ? "● Online"
+                      : admin.lastActivityAt
+                      ? `Last seen ${daysSince(admin.lastActivityAt) === 0 ? "today" : `${daysSince(admin.lastActivityAt)}d ago`}`
+                      : "Never active"}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
 
       {/* Navigation Grid */}
       <div className="mb-4">

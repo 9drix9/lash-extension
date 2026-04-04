@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { getEnhancedAdminStats, getRiskAlerts } from "@/lib/actions/admin-analytics";
+import { prisma } from "@/lib/prisma";
+import { getEnhancedAdminStats, getRiskAlerts, getAdminBoard } from "@/lib/actions/admin-analytics";
 import { AdminClient } from "./admin-client";
 
 export default async function AdminDashboardPage() {
@@ -10,9 +11,17 @@ export default async function AdminDashboardPage() {
   if (!session?.user || session.user.role !== "ADMIN") redirect("/");
 
   const t = await getTranslations("admin");
-  const [stats, alerts] = await Promise.all([
+
+  // Ping lastActivityAt so online status works
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { lastActivityAt: new Date() },
+  });
+
+  const [stats, alerts, adminBoard] = await Promise.all([
     getEnhancedAdminStats(),
     getRiskAlerts(),
+    getAdminBoard(),
   ]);
 
   return (
@@ -35,7 +44,7 @@ export default async function AdminDashboardPage() {
           </Link>
         </div>
 
-        <AdminClient stats={stats} alerts={alerts} />
+        <AdminClient stats={stats} alerts={alerts} adminBoard={adminBoard} />
       </div>
     </div>
   );
